@@ -1,0 +1,17 @@
+
+{
+  "name": "Food House POS",
+  "short_name": "Food House",
+  "description": "Elegant restaurant management solution",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "196x196",
+      "type": "image/png"
+    }
+  ]
+}

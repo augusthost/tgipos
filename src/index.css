@@ -1,0 +1,84 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* White */
+    --foreground: 222.2 84% 4.9%; /* Dark text */
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 0 0% 100%; /* White */
+    --primary-foreground: 222.2 84% 4.9%;
+
+    --secondary: 213.1 100% 49.8%; /* #007bff */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 213.1 100% 49.8%; /* #007bff with 0.1 opacity */
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 213.1 100% 49.8%; /* #007bff */
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 213.1 100% 49.8%; /* #007bff */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 213.1 100% 96%;
+    --sidebar-accent-foreground: 213.1 100% 49.8%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 213.1 100% 49.8%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Glass Effect */
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+
+  /* Button Animations */
+  .btn-hover {
+    @apply transition-all duration-200 ease-in-out transform hover:scale-[1.03] active:scale-[0.97];
+  }
+
+  /* Card Animations */
+  .card-hover {
+    @apply transition-all duration-300 ease-in-out transform hover:shadow-md hover:-translate-y-1;
+  }
+
+  /* Fade Animations */
+  .fade-in {
+    @apply animate-fade-in;
+  }
+
+  /* Slide Animations */
+  .slide-up {
+    @apply animate-slide-up;
+  }
+
+  .slide-down {
+    @apply animate-slide-down;
+  }
+}
