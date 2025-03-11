@@ -1,7 +1,7 @@
 
 {
-  "name": "Food House POS",
-  "short_name": "Food House",
+  "name": "TGI POS",
+  "short_name": "TGI",
   "description": "Elegant restaurant management solution",
   "start_url": "/",
   "display": "standalone",

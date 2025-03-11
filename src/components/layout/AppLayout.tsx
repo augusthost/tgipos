@@ -21,7 +21,7 @@ const AppLayout = () => {
       
       <main className="flex-1 overflow-auto bg-gray-50">
         <div className="h-16 border-b border-border bg-white shadow-sm px-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Food House</h1>
+          <h1 className="text-xl font-semibold">TGI Pos</h1>
           
           <button
             onClick={() => setCartCollapsed(false)}

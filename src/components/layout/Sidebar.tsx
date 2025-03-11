@@ -54,7 +54,7 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
               transition={{ duration: 0.3 }}
               className="font-semibold text-lg"
             >
-              Food House
+              TGI Pos
             </motion.div>
           )}
           <button
@@ -128,7 +128,7 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
                 transition={{ duration: 0.3 }}
                 className="text-xs text-gray-500 text-center"
               >
-                Food House POS v1.0
+                TGI POS v1.0
               </motion.div>
             ) : (
               <motion.div
