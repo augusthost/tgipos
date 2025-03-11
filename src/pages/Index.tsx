@@ -6,7 +6,6 @@ const Index = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Redirect to the POS page
     navigate('/');
   }, [navigate]);
   

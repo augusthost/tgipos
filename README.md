@@ -60,6 +60,34 @@ TGI POS is a desktop point-of-sale application built using Electron, Vite, React
 
 ---
 
+## Contribution Guide
+
+We truly appreciate your interest in contributing to TGI POS! To ensure smooth collaboration, please follow these guidelines:
+
+1. Branching and Pull Requests:
+   - All pull requests must be made to the develop branch.
+   - Create a new branch from develop for every feature or bugfix you work on.
+   - Once complete, open a pull request targeting the develop branch.
+2. Commit Messages:
+   - Follow the commit message guidelines as described in the Conventional Changelog/commitlint guide.
+   - Your commit messages should be clear, descriptive, and follow the proper format (e.g., type(scope): description).
+3. Code Quality and Linting:
+   - Ensure that your code passes all ESLint checks before submitting a pull request.
+   - PRs that do not pass ESLint will not be merged until all issues are resolved.
+   - Run linting locally with the command:
+   ```bash
+      npm run lint
+   ```
+   and fix any issues that arise.
+5. General Guidelines:
+   - Feel free to open an issue to discuss larger changes or new feature ideas before starting work.
+   - Follow the existing code style and project structure.
+   - Make sure to update documentation as needed when adding new features or modifying existing ones.
+   
+We welcome your contributions and are excited to build a reliable, offline-capable point-of-sale system together!
+
+---
+
 ## Contributors
 
 We welcome contributions! Feel free to check our [contributing guidelines](CONTRIBUTING.md) and submit issues or pull requests. Special thanks to all contributors who have already supported this project.
