@@ -69,7 +69,7 @@ We welcome contributions! Feel free to check our [contributing guidelines](CONTR
 
 If you like TGI Offline POS and want to support our work, please give us a star on GitHub! Your support means a lot and helps us increase the reach of this project.
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/tgi-offline-pos?style=social)](https://github.com/yourusername/tgi-offline-pos/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/augusthost/tgipos?style=social)](https://github.com/augusthost/tgipos/stargazers)
 
 ---
 
