@@ -1,25 +1,29 @@
 
-import { useState } from 'react';
+import { createOrder } from '@/services/orderService';
+import { fetchTables } from '@/services/tableService';
+import { userOrderStore } from '@/store/order-store';
+import { useTableStore } from '@/store/table-store';
+import { Order, OrderStatus, OrderType, Table } from '@/types';
 import { motion } from 'framer-motion';
 import { PlusCircle } from 'lucide-react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// Mock tables data
-const tables = [
-  { id: 1, name: 'Table 1', seats: 2, status: 'available' },
-  { id: 2, name: 'Table 2', seats: 4, status: 'occupied' },
-  { id: 3, name: 'Table 3', seats: 6, status: 'available' },
-  { id: 4, name: 'Table 4', seats: 2, status: 'reserved' },
-  { id: 5, name: 'Table 5', seats: 4, status: 'available' },
-  { id: 6, name: 'Table 6', seats: 8, status: 'occupied' },
-  { id: 7, name: 'Table 7', seats: 2, status: 'available' },
-  { id: 8, name: 'Table 8', seats: 4, status: 'available' },
-  { id: 9, name: 'Table 9', seats: 6, status: 'reserved' },
-  { id: 10, name: 'Table 10', seats: 2, status: 'available' },
-  { id: 11, name: 'Table 11', seats: 4, status: 'available' },
-  { id: 12, name: 'Table 12', seats: 4, status: 'occupied' },
-];
 
 const Tables = () => {
+  const navigate = useNavigate();
+
+  const { getTables, setTables } = useTableStore();
+  const tables = getTables();
+  const { addOrder } = userOrderStore();
+
+    useEffect(()=>{
+      (async()=>{
+        const menuItems = await fetchTables();
+        setTables(menuItems);
+      })()
+    },[setTables])
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'available':
@@ -36,6 +40,24 @@ const Tables = () => {
   const getStatusText = (status: string) => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
+
+  const assignTable  = async (table: Table) =>{
+    const payload = {
+      table: {
+        _model: 'table',
+        _id: table._id
+      },
+      order_type: OrderType.DineIn,
+      total_amount: 0,
+      customer:null,
+      status: OrderStatus.Pending
+    };
+    const order : Order = await createOrder(payload);
+
+    addOrder(order);
+
+    navigate('/tables/'+table.table_number+'/order/'+order._id);
+  }
   
   return (
     <div className="space-y-6">
@@ -53,19 +75,20 @@ const Tables = () => {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {tables.map((table) => (
+        {tables && tables.map((table) => (
           <motion.div
-            key={table.id}
+            key={table._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={()=>assignTable(table)}
             className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300"
           >
             <div className="border-b border-gray-100 p-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-medium text-lg">{table.name}</h3>
+                <h3 className="font-medium text-lg">{table.table_number}</h3>
                 <div className={`px-2 py-1 rounded-full text-xs text-white ${getStatusColor(table.status)}`}>
                   {getStatusText(table.status)}
                 </div>

@@ -36,99 +36,260 @@ export const categories: Category[] = [
 
 export const menuItems: MenuItem[] = [
   {
-    id: 'item1',
-    name: 'Classic Burger',
-    price: 9.99,
-    category: 'cat2',
-    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=300&auto=format&fit=crop',
-    description: 'Beef patty with cheese, lettuce, tomato, and special sauce'
+    "name": "လ္ဘက်သုပ်",
+    "description": "လ္ဘက်သုပ်",
+    "category": {
+      "_model": "category",
+      "_id": "f80ca6d133336312d40000e0"
+    },
+    "price": 2500,
+    "image": null,
+    "available": true,
+    "_modified": 1741167054,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167042,
+    "_state": 1,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f86e5017326630f56900011b"
   },
   {
-    id: 'item2',
-    name: 'Margherita Pizza',
-    price: 12.99,
-    category: 'cat3',
-    image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=300&auto=format&fit=crop',
-    description: 'Classic pizza with tomato sauce, mozzarella, and basil'
+    "name": "ဆိုင်ဖျော်ကော်ဖီ",
+    "description": "ဆိုင်ဖျော်ကော်ဖီ",
+    "category": {
+      "_model": "category",
+      "_id": "f84b6e5f646137433f00036b"
+    },
+    "price": 2000,
+    "image": null,
+    "available": true,
+    "_state": 1,
+    "_modified": 1741167118,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167118,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f879ca653561304ec9000258"
   },
   {
-    id: 'item3',
-    name: 'Caesar Salad',
-    price: 8.49,
-    category: 'cat4',
-    image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?q=80&w=300&auto=format&fit=crop',
-    description: 'Romaine lettuce with parmesan, croutons, and Caesar dressing'
+    "name": "Milkshake",
+    "description": "Milkshake",
+    "category": {
+      "_model": "category",
+      "_id": "f84d66386666638ba70000e7"
+    },
+    "price": 3000,
+    "image": null,
+    "available": true,
+    "_state": 1,
+    "_modified": 1741167165,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167165,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f88111a3636262c0d2000082"
   },
   {
-    id: 'item4',
-    name: 'Veggie Burger',
-    price: 10.99,
-    category: 'cat2',
-    image: 'https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?q=80&w=300&auto=format&fit=crop',
-    description: 'Plant-based patty with lettuce, tomato, and special sauce'
+    "name": "ထမင်းကြော်",
+    "description": "ထမင်းကြော်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f8933cbf3765626bf900033c"
+      },
+      {
+        "_model": "category",
+        "_id": "f82aa1d630396483fc00017c"
+      }
+    ],
+    "price": 4000,
+    "image": null,
+    "available": true,
+    "_modified": 1741167327,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167225,
+    "_state": 1,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f88a2fa8643862e4a9000121"
   },
   {
-    id: 'item5',
-    name: 'Pepperoni Pizza',
-    price: 14.99,
-    category: 'cat3',
-    image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=300&auto=format&fit=crop',
-    description: 'Pizza with tomato sauce, mozzarella, and pepperoni'
+    "name": "Ice Cream",
+    "description": "Ice Cream",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f84354d9663632626c000106"
+      }
+    ],
+    "price": 2000,
+    "image": null,
+    "available": true,
+    "_state": 1,
+    "_modified": 1741167368,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167368,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8a005ed3637625034000121"
   },
   {
-    id: 'item6',
-    name: 'Greek Salad',
-    price: 9.49,
-    category: 'cat4',
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=300&auto=format&fit=crop',
-    description: 'Mixed greens with feta, olives, cucumber, and vinaigrette'
+    "name": "ဂျင်းသုပ်",
+    "description": "ဂျင်းသုပ်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f80ca6d133336312d40000e0"
+      }
+    ],
+    "price": 2500,
+    "image": null,
+    "available": true,
+    "_modified": 1741167452,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167443,
+    "_state": 1,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8ab5f813566633e450003c2"
   },
   {
-    id: 'item7',
-    name: 'Iced Coffee',
-    price: 4.99,
-    category: 'cat5',
-    image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=300&auto=format&fit=crop',
-    description: 'Cold brewed coffee served over ice'
+    "name": "ဖီတန်သုပ်",
+    "description": "ဖီတန်သုပ်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f80ca6d133336312d40000e0"
+      }
+    ],
+    "price": 3000,
+    "image": null,
+    "available": false,
+    "_state": 1,
+    "_modified": 1741167506,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167506,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8b4f93062656235f7000060"
   },
   {
-    id: 'item8',
-    name: 'Chocolate Cake',
-    price: 6.99,
-    category: 'cat6',
-    image: 'https://images.unsplash.com/photo-1606890658317-7d14490b76fd?q=80&w=300&auto=format&fit=crop',
-    description: 'Rich chocolate cake with a layer of fudge frosting'
+    "name": "ခေါက်ဆွဲကြော်",
+    "description": "ခေါက်ဆွဲကြော်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f8933cbf3765626bf900033c"
+      }
+    ],
+    "price": 3500,
+    "image": null,
+    "available": true,
+    "_modified": 1741167569,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167564,
+    "_state": 1,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8bde0743562397491000222"
   },
   {
-    id: 'item9',
-    name: 'Double Cheeseburger',
-    price: 12.99,
-    category: 'cat2',
-    image: 'https://images.unsplash.com/photo-1603064752734-4c48eff53d05?q=80&w=300&auto=format&fit=crop',
-    description: 'Two beef patties with double cheese, lettuce, tomato, and special sauce'
+    "name": "အီကြာကွေး",
+    "description": "အီကြာကွေး",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f82aa1d630396483fc00017c"
+      }
+    ],
+    "price": 1200,
+    "image": null,
+    "available": false,
+    "_state": 1,
+    "_modified": 1741167614,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167600,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8c36a09663533cf0e00036e"
   },
   {
-    id: 'item10',
-    name: 'Vegetarian Pizza',
-    price: 13.99,
-    category: 'cat3',
-    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=300&auto=format&fit=crop',
-    description: 'Pizza with tomato sauce, mozzarella, bell peppers, onions, and mushrooms'
+    "name": "Mojito",
+    "description": "Mojito",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f8567891353766bb5b00015c"
+      },
+      {
+        "_model": "category",
+        "_id": "f820a5586139359c40000390"
+      }
+    ],
+    "price": 3000,
+    "image": null,
+    "available": false,
+    "_modified": 1741167709,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167704,
+    "_state": 1,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8d3327d3130656a35000384"
   },
   {
-    id: 'item11',
-    name: 'Fruit Smoothie',
-    price: 5.99,
-    category: 'cat5',
-    image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?q=80&w=300&auto=format&fit=crop',
-    description: 'Blend of seasonal fruits with yogurt and honey'
+    "name": "ထောပတ်သီးဖျော်ရည်",
+    "description": "ထောပတ်သီးဖျော်ရည်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f84d66386666638ba70000e7"
+      },
+      {
+        "_model": "category",
+        "_id": "f84354d9663632626c000106"
+      }
+    ],
+    "price": 2500,
+    "image": null,
+    "available": true,
+    "_state": 1,
+    "_modified": 1741167826,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167826,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8e5dcea36633928d2000163"
   },
   {
-    id: 'item12',
-    name: 'Cheesecake',
-    price: 7.49,
-    category: 'cat6',
-    image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=300&auto=format&fit=crop',
-    description: 'Creamy cheesecake with a graham cracker crust'
+    "name": "မလေးရှားထမင်းကြော်",
+    "description": "မလေးရှားထမင်းကြော်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f8933cbf3765626bf900033c"
+      },
+      {
+        "_model": "category",
+        "_id": "f83bc8c83865370b500000d7"
+      }
+    ],
+    "price": 4000,
+    "image": null,
+    "available": true,
+    "_state": 1,
+    "_modified": 1741167864,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167864,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8ebbc43623331d0fc0003d7"
+  },
+  {
+    "name": "ကြက်သားသုပ်",
+    "description": "ကြက်သားသုပ်",
+    "category": [
+      {
+        "_model": "category",
+        "_id": "f80ca6d133336312d40000e0"
+      }
+    ],
+    "price": 6000,
+    "image": null,
+    "available": true,
+    "_modified": 1741167899,
+    "_mby": "f38a9a7337353248a30002f4",
+    "_created": 1741167894,
+    "_state": 1,
+    "_cby": "f38a9a7337353248a30002f4",
+    "_id": "f8f0493361623247c30001c8"
   }
 ];

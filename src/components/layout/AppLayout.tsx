@@ -5,12 +5,12 @@ import { motion } from 'framer-motion';
 import Sidebar from './Sidebar';
 import CartSidebar from './CartSidebar';
 import { ShoppingCart } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
+import { useOrderItemsStore } from '@/store/orderitem-store';
 
 const AppLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [cartCollapsed, setCartCollapsed] = useState(false);
-  const { cartItems } = useCart();
+  const { getOrderItems } = useOrderItemsStore();
   
   return (
     <div className="flex h-screen overflow-hidden">
@@ -34,7 +34,7 @@ const AppLayout = () => {
               animate={{ scale: 1 }}
               className="absolute -top-1 -right-1 bg-secondary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
             >
-              {cartItems.length}
+              {getOrderItems().length}
             </motion.span>
           </button>
         </div>
