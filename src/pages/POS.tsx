@@ -1,19 +1,43 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, Filter } from 'lucide-react';
-import { categories, menuItems } from '@/data/mockData';
-import { MenuItem as MenuItemType } from '@/types';
-import { useCart } from '@/contexts/CartContext';
+import { Search, Filter } from 'lucide-react';
+import { Menu } from '@/types';
+import { useOrderItemsStore } from '@/store/orderitem-store';
+import { fetchMenus } from '@/services/menuService';
+import { fetchCategories } from '@/services/categoryService';
 
 const POS = () => {
   const [ selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [ searchQuery, setSearchQuery] = useState('');
-  const { addItem } = useCart();
+  const { addOrderItem } = useOrderItemsStore();
+  const [menus, setMenus] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(()=>{
+    (async()=>{
+      const menuItems = await fetchMenus();
+      setMenus(menuItems);
+
+      const categoryItems = await fetchCategories();
+      setCategories(categoryItems);
+    })()
+  },[])
   
   // Filter menu items based on category and search
-  const filteredItems = menuItems.filter(item => {
-    const matchesCategory = selectedCategory ? item.category === selectedCategory : true;
+  const filteredItems = menus.filter(item => {
+
+    // Match Category
+    let matchesCategory = true;
+    if(selectedCategory && !item.category[0]){
+        matchesCategory = item.category._id === selectedCategory;
+    }
+    
+    if(selectedCategory && item.category[0]){
+        matchesCategory = item.category.find((category) => category._id === selectedCategory);
+    }
+
+    // Match Search
     const matchesSearch = searchQuery
       ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         item.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -57,20 +81,20 @@ const POS = () => {
           All Items
         </motion.button>
         
-        {categories.map((category) => (
+        {categories && categories.map((category) => (
           <motion.button
-            key={category.id}
+            key={category._id}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setSelectedCategory(category.id)}
+            onClick={() => setSelectedCategory(category._id)}
             className={`flex items-center px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
-              selectedCategory === category.id
+              selectedCategory === category._id
                 ? 'bg-secondary text-white shadow-sm'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
             <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
               <img
-                src={category.image}
+                src={category.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
                 alt={category.name}
                 className="h-full w-full object-cover"
               />
@@ -84,9 +108,9 @@ const POS = () => {
         <AnimatePresence>
           {filteredItems.map((item) => (
             <MenuItem
-              key={item.id}
+              key={item._id}
               item={item}
-              onAddToCart={() => addItem(item)}
+              onAddToCart={() => addOrderItem(item)}
             />
           ))}
         </AnimatePresence>
@@ -104,7 +128,7 @@ const POS = () => {
 };
 
 interface MenuItemProps {
-  item: MenuItemType;
+  item: Menu;
   onAddToCart: () => void;
 }
 
@@ -121,7 +145,7 @@ const MenuItem = ({ item, onAddToCart }: MenuItemProps) => {
     >
       <div className="h-40 w-full overflow-hidden">
         <img
-          src={item.image}
+          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
           alt={item.name}
           className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
         />

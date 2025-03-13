@@ -22,10 +22,9 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { name: 'POS', icon: LayoutGrid, path: '/' },
   { name: 'Food Menus', icon: UtensilsCrossed, path: '/food-menus' },
   { name: 'Categories', icon: Tags, path: '/categories' },
-  { name: 'Tables', icon: Table, path: '/tables' },
+  { name: 'Tables', icon: Table, path: '/' },
   { name: 'Orders', icon: ClipboardList, path: '/orders' },
 ];
 

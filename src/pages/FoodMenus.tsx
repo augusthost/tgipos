@@ -1,13 +1,21 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { menuItems } from '@/data/mockData';
 import { PlusCircle, Search, Edit, Trash } from 'lucide-react';
+import { fetchMenus } from '@/services/menuService';
 
 const FoodMenus = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [menus, setMenus] = useState([]);
+
+  useEffect(()=>{
+    (async()=>{
+      const menuItems = await fetchMenus();
+      setMenus(menuItems);
+    })()
+  },[])
   
-  const filteredItems = menuItems.filter(item => 
+  const filteredItems = menus.filter(item => 
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -54,7 +62,7 @@ const FoodMenus = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredItems.map((item) => (
+              {filteredItems && filteredItems.map((item) => (
                 <motion.tr 
                   key={item.id}
                   initial={{ opacity: 0 }}
@@ -66,7 +74,7 @@ const FoodMenus = () => {
                     <div className="flex items-center">
                       <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0">
                         <img 
-                          src={item.image} 
+                          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE} 
                           alt={item.name}
                           className="h-full w-full object-cover"
                         />

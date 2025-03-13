@@ -1,5 +1,3 @@
-
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Trash2, 
@@ -10,8 +8,14 @@ import {
   Printer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useCart } from '@/contexts/CartContext';
-import { CartItem } from '@/types';
+import { Order, OrderItem, OrderStatus, TableStatus } from '@/types';
+import { useOrderItemsStore } from '@/store/orderitem-store';
+import { useNavigate, useParams } from 'react-router-dom';
+import { updateOrder, fetchOrder } from '@/services/orderService';
+import { userOrderStore } from '@/store/order-store';
+import { updateTable } from '@/services/tableService';
+import { createOrderItem } from '@/services/orderItemsService';
+import { toast } from 'sonner';
 
 interface CartSidebarProps {
   collapsed: boolean;
@@ -19,7 +23,58 @@ interface CartSidebarProps {
 }
 
 const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
-  const { cartItems, removeItem, updateQuantity, clearCart, getTotal } = useCart();
+  const { getOrderItems, removeOrderItem, getTotal, clearOrderItems, updateQuantity } = useOrderItemsStore();
+  const { getOrder } = userOrderStore();
+  const {tableNumber,orderId} = useParams();
+  const orderItems  = getOrderItems();
+  const navigate = useNavigate();
+
+
+  const orderCart = async () => {
+    const order : Order = await getOrder(orderId);
+    if(!order){
+       navigate('/');
+       return;
+    }
+
+    const updatedOrder = await updateOrder({
+      _id: orderId,
+      table: {
+        _model: 'table',
+        _id: order.table._id
+      },
+      customer: null,
+      status: OrderStatus.Completed,
+      total_amount: Number(getTotal().toFixed(2))
+    })
+  
+    const updatedTable = await updateTable({
+      _id: order.table._id,
+      status: TableStatus.Available
+    })
+
+    orderItems.forEach(async (item) => {
+      await createOrderItem({
+        order: {
+          _model: 'order',
+          _id: orderId
+        },
+        menu: {
+          _model: 'menu',
+          _id: item._id
+        },
+        price: item.price,
+        quantity: item.quantity,
+        special_instruction: 'Testing!'
+      });
+    });
+
+    clearOrderItems();
+
+    toast.success('Order placed successfully!');
+
+  }
+
   const sidebarVariants = {
     expanded: { width: 380, opacity: 1 },
     collapsed: { width: 0, opacity: 0 }
@@ -50,7 +105,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
         
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <AnimatePresence initial={false}>
-            {cartItems.length === 0 ? (
+            {orderItems.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -61,12 +116,12 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
                 <p>Your cart is empty</p>
               </motion.div>
             ) : (
-              cartItems.map((item) => (
-                <CartItemCard
-                  key={item.id}
+              orderItems.map((item) => (
+                <OrderItemCard
+                  key={item._id}
                   item={item}
-                  onRemove={() => removeItem(item.id)}
-                  onUpdateQuantity={(quantity) => updateQuantity(item.id, quantity)}
+                  onRemove={() => removeOrderItem(item._id)}
+                  onUpdateQuantity={(quantity) => updateQuantity(item._id, quantity)}
                 />
               ))
             )}
@@ -92,18 +147,19 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
           <div className="grid grid-cols-2 gap-2">
             <button 
               className="flex items-center justify-center p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200 btn-hover"
-              onClick={() => clearCart()}
-              disabled={cartItems.length === 0}
+              onClick={() => clearOrderItems()}
+              disabled={orderItems.length === 0}
             >
               <Printer className="h-5 w-5 mr-2" />
               <span>Print Receipt</span>
             </button>
             <button 
               className="flex items-center justify-center p-3 rounded-lg bg-secondary text-white hover:bg-secondary/90 transition-colors duration-200 btn-hover"
-              disabled={cartItems.length === 0}
+              disabled={orderItems.length === 0}
+              onClick={orderCart}
             >
               <CreditCard className="h-5 w-5 mr-2" />
-              <span>Pay Now</span>
+              <span>Order</span>
             </button>
           </div>
         </div>
@@ -122,13 +178,13 @@ const ShoppingCart = ({ className }: { className?: string }) => (
 );
 
 // Cart Item Component
-interface CartItemCardProps {
-  item: CartItem;
+interface OrderItemCardProps {
+  item: OrderItem;
   onRemove: () => void;
   onUpdateQuantity: (quantity: number) => void;
 }
 
-const CartItemCard = ({ item, onRemove, onUpdateQuantity }: CartItemCardProps) => {
+const OrderItemCard = ({ item, onRemove, onUpdateQuantity }: OrderItemCardProps) => {
   return (
     <motion.div
       layout
@@ -140,7 +196,7 @@ const CartItemCard = ({ item, onRemove, onUpdateQuantity }: CartItemCardProps) =
     >
       <div className="h-14 w-14 flex-shrink-0 rounded-md overflow-hidden mr-3">
         <img 
-          src={item.image} 
+          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE} 
           alt={item.name}
           className="h-full w-full object-cover"
         />
