@@ -1,4 +1,4 @@
-import { Order, OrderItem } from "@/types";
+import { Order, OrderItem, OrderItemStatus } from "@/types";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -42,7 +42,7 @@ const OrderDetails = ({ open, onClose, order }: OrderDetailsProps) => {
             {orderItems.map((item) => {
               return (
                 <div key={item._id} className="flex">
-                  <div className="w-[50%]">{item.menu.name}</div>
+                  <div className="w-[50%]">{item.menu.name} {item.status === OrderItemStatus.Cancelled?<span className="ml-2 text-xs bg-gray-100 text-gray-600">Cancelled</span>:''}</div>
                   <div className="w-[20%] text-right">{item.quantity}</div>
                   <div className="w-[30%] text-right">${item.price}</div>
                 </div>

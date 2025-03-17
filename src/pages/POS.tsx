@@ -16,7 +16,8 @@ import { updateTable } from '@/services/tableService';
 const POS = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const { orderItems, addOrderItem, setOrderId, orderId } = useOrderItemsStore();
+  const { orderItems, addOrderItem } = useOrderItemsStore();
+  const [ orderId, setOrderId ] = useState('');
   const { getTable } = useTableStore();
   const [menus, setMenus] = useState([]);
   const [categories, setCategories] = useState([]);

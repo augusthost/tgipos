@@ -41,18 +41,6 @@ const Tables = () => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
-  const checkIn = async (table: Table) => {
-
-    // if active order and occupied table
-    if (table.order && table.status === TableStatus.Occupied) {
-        navigate('/tables/' + table.table_number);
-        return;
-    }
-
-    navigate('/tables/' + table.table_number);
-
-  }
-
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">

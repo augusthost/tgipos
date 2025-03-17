@@ -24,6 +24,7 @@ interface CartSidebarProps {
 const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
   const { orderItems, getTotal, setOrderItems, clearOrderItems, updateOrderItem } = useOrderItemsStore();
   const  { updateOrder } = useOrderStore();
+  const [orderId, setOrderId] = useState('');
   const  { updateTable , getTable } = useTableStore();
   const { tableId } = useParams();
   const [currentTable, setCurrentTable] = useState<Table | null>();
@@ -35,9 +36,12 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
       const table = await getTable(tableId);
       if(!table) return;
       setCurrentTable(table);
-      if(!table?.order) return;
-
-      const data = await fetchOrderItems(table?.order?._id, false);
+      if(!table?.order){
+         setOrderItems([]);
+         return;
+      };
+      setOrderId(table?.order?._id);
+      const data = await fetchOrderItems(table?.order?._id);
       setOrderItems(data);
     }
     getOrderItems();
@@ -88,6 +92,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
 
     // Update statuses 
     orderItems.forEach( async (orderItem) => {
+      if(orderItem.status === OrderItemStatus.Cancelled) return;
       orderItem.status = OrderItemStatus.Completed;
       await updateOrderItem(orderItem);
     })
@@ -149,6 +154,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
             ) : (
               orderItems.map((item, index) => (
                 <OrderItemsCart
+                  orderId={orderId}
                   key={item?._id || index}
                   item={item}
                 />

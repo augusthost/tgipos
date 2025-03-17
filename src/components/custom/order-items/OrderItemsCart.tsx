@@ -18,17 +18,18 @@ import { deleteOrder } from '@/services/orderService';
 // Cart Item Component
 interface OrderItemsCartProps {
   item: OrderItem;
+  orderId: string;
 }
 
 
-const OrderItemsCart = ({ item }: OrderItemsCartProps) => {
+const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
 
   const [openSpecialInstruction, setOpenSpecialInstruction] = useState(false);
-  const { orderItems, updateOrderItem, removeOrderItem, updateQuantity, orderId } = useOrderItemsStore();
+  const { orderItems, updateOrderItem, removeOrderItem, updateQuantity } = useOrderItemsStore();
   const { tableId } = useParams();
 
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = (id: string, orderId: string) => {
     if (orderItems.length === 1) {
       updateTable({
         _id: tableId,
@@ -101,10 +102,10 @@ const OrderItemsCart = ({ item }: OrderItemsCartProps) => {
           >
             <Plus className="h-4 w-4" />
           </button>)}
-          
+
           <button
             className="ml-2 p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors duration-200"
-            onClick={() => removeFromCart(item?._id)}
+            onClick={() => removeFromCart(item?._id, orderId)}
           >
             <Trash2 className="h-4 w-4" />
           </button>

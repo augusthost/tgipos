@@ -5,8 +5,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 
-export const fetchOrderItems = async (orderId: string, excludeCompleted: boolean = false): Promise<OrderItem[]> => {
-    const response = await fetch(`${API_URL}/api/content/items/orderitem?populate=1&filter={order:"${orderId}"${excludeCompleted ? ',status:{$ne:"completed"}' : ''}}`,{
+export const fetchOrderItems = async (orderId: string): Promise<OrderItem[]> => {
+    const response = await fetch(`${API_URL}/api/content/items/orderitem?populate=1&filter={order:"${orderId}"}`,{
         headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
     });
     if (!response.ok) throw new Error('Failed to fetch orderItems');
