@@ -1,92 +1,28 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Eye, Printer, Clock, CheckCircle, XCircle } from 'lucide-react';
-
-// Mock orders data
-const orders = [
-  { 
-    id: 'ORD-001', 
-    customer: 'John Doe', 
-    date: '2023-06-15 14:30', 
-    items: 4, 
-    total: 45.99, 
-    status: 'completed',
-    table: 'Table 3' 
-  },
-  { 
-    id: 'ORD-002', 
-    customer: 'Jane Smith', 
-    date: '2023-06-15 15:45', 
-    items: 2, 
-    total: 23.50, 
-    status: 'in-progress',
-    table: 'Table 7' 
-  },
-  { 
-    id: 'ORD-003', 
-    customer: 'Robert Johnson', 
-    date: '2023-06-15 16:20', 
-    items: 3, 
-    total: 37.25, 
-    status: 'completed',
-    table: 'Table 2' 
-  },
-  { 
-    id: 'ORD-004', 
-    customer: 'Emily Davis', 
-    date: '2023-06-15 16:45', 
-    items: 5, 
-    total: 52.75, 
-    status: 'cancelled',
-    table: 'Table 5' 
-  },
-  { 
-    id: 'ORD-005', 
-    customer: 'Michael Wilson', 
-    date: '2023-06-15 17:10', 
-    items: 2, 
-    total: 19.99, 
-    status: 'in-progress',
-    table: 'Table 1' 
-  },
-  { 
-    id: 'ORD-006', 
-    customer: 'Sarah Brown', 
-    date: '2023-06-15 17:30', 
-    items: 3, 
-    total: 32.50, 
-    status: 'completed',
-    table: 'Table 8' 
-  },
-  { 
-    id: 'ORD-007', 
-    customer: 'David Lee', 
-    date: '2023-06-15 18:15', 
-    items: 4, 
-    total: 41.75, 
-    status: 'in-progress',
-    table: 'Table 4' 
-  },
-  { 
-    id: 'ORD-008', 
-    customer: 'Jennifer Taylor', 
-    date: '2023-06-15 19:00', 
-    items: 6, 
-    total: 67.25, 
-    status: 'completed',
-    table: 'Table 6' 
-  }
-];
+import { fetchOrders } from '@/services/orderService';
+import { useOrderStore } from '@/store/order-store';
+import OrderDetails from '@/components/custom/orders/OrderDetails';
 
 const Orders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const { orders, setOrders } = useOrderStore();
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+    useEffect(() => {
+      (async () => {
+        const orders = await fetchOrders();
+        setOrders(orders);
+      })()
+    }, [])
   
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchQuery
-      ? order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customer.toLowerCase().includes(searchQuery.toLowerCase())
+      ? order._id.toLowerCase().includes(searchQuery.toLowerCase()) 
+      // || order.customer.toLowerCase().includes(searchQuery.toLowerCase())
       : true;
     
     const matchesStatus = statusFilter
@@ -95,12 +31,20 @@ const Orders = () => {
     
     return matchesSearch && matchesStatus;
   });
+
+  const openOrderDetails = (order) => {
+    setSelectedOrder(order); // Set the selected order
+  };
+
+  const closeOrderDetails = () => {
+    setSelectedOrder(null); // Clear the selected order
+  };
   
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
         return 'bg-green-500';
-      case 'in-progress':
+      case 'pending':
         return 'bg-amber-500';
       case 'cancelled':
         return 'bg-red-500';
@@ -113,8 +57,8 @@ const Orders = () => {
     switch (status) {
       case 'completed':
         return 'Completed';
-      case 'in-progress':
-        return 'In Progress';
+      case 'pending':
+        return 'Pending';
       case 'cancelled':
         return 'Cancelled';
       default:
@@ -126,7 +70,7 @@ const Orders = () => {
     switch (status) {
       case 'completed':
         return <CheckCircle className="h-4 w-4 mr-1.5" />;
-      case 'in-progress':
+      case 'pending':
         return <Clock className="h-4 w-4 mr-1.5" />;
       case 'cancelled':
         return <XCircle className="h-4 w-4 mr-1.5" />;
@@ -136,7 +80,7 @@ const Orders = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Orders</h1>
         
@@ -164,6 +108,22 @@ const Orders = () => {
         >
           All Orders
         </motion.button>
+
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setStatusFilter('pending')}
+          className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
+            statusFilter === 'pending'
+              ? 'bg-amber-500 text-white shadow-sm'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <span className="flex items-center">
+          <Clock className="h-4 w-4 mr-1.5" />
+          Pending
+          </span>
+        </motion.button>
+        
         
         <motion.button
           whileTap={{ scale: 0.95 }}
@@ -177,21 +137,6 @@ const Orders = () => {
           <span className="flex items-center">
             <CheckCircle className="h-4 w-4 mr-1.5" />
             Completed
-          </span>
-        </motion.button>
-        
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setStatusFilter('in-progress')}
-          className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
-            statusFilter === 'in-progress'
-              ? 'bg-amber-500 text-white shadow-sm'
-              : 'bg-white text-gray-700 hover:bg-gray-100'
-          }`}
-        >
-          <span className="flex items-center">
-            <Clock className="h-4 w-4 mr-1.5" />
-            In Progress
           </span>
         </motion.button>
         
@@ -220,7 +165,7 @@ const Orders = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Table</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th> */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -229,29 +174,29 @@ const Orders = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredOrders.map((order) => (
                 <motion.tr 
-                  key={order.id}
+                  key={order._id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                   className="hover:bg-gray-50"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{order.id}</div>
+                    <div className="text-sm font-medium text-gray-900">{order._id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{order.customer}</div>
+                    <div className="text-sm text-gray-900">{order?.customer?.name || 'N/A'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{order.date}</div>
+                    <div className="text-sm text-gray-500">{new Date(order._created * 1000).toLocaleString()}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{order.table}</div>
+                    <div className="text-sm text-gray-500">{order?.table ? order?.table?.table_number : 'N/A'}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  {/* <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{order.items}</div>
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">${order.total.toFixed(2)}</div>
+                    <div className="text-sm font-medium text-gray-900">${order?.total_amount.toFixed(2)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white ${getStatusColor(order.status)}`}>
@@ -262,7 +207,7 @@ const Orders = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-secondary hover:text-secondary/80 mr-3">
+                    <button onClick={() => openOrderDetails(order)} className="text-secondary hover:text-secondary/80 mr-3">
                       <Eye className="h-4 w-4" />
                     </button>
                     <button className="text-gray-500 hover:text-gray-700">
@@ -283,6 +228,10 @@ const Orders = () => {
           </table>
         </div>
       </div>
+
+      {selectedOrder && (
+        <OrderDetails onClose={closeOrderDetails} open={!!selectedOrder} order={selectedOrder} />
+      )}
     </div>
   );
 };

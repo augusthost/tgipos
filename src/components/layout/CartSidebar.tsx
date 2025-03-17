@@ -1,89 +1,120 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Trash2, 
-  Plus, 
-  Minus, 
+import {
   X,
-  CreditCard, 
+  CreditCard,
   Printer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Order, OrderItem, OrderStatus, TableStatus } from '@/types';
+import { OrderItemStatus, OrderStatus, Table, TableStatus } from '@/types';
 import { useOrderItemsStore } from '@/store/orderitem-store';
-import { useNavigate, useParams } from 'react-router-dom';
-import { updateOrder, fetchOrder } from '@/services/orderService';
-import { userOrderStore } from '@/store/order-store';
-import { updateTable } from '@/services/tableService';
-import { createOrderItem } from '@/services/orderItemsService';
+import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
+import { useOrderStore } from '@/store/order-store';
+import { useTableStore } from '@/store/table-store';
+import OrderItemsCart from '../custom/order-items/OrderItemsCart';
+import { fetchOrderItems } from '@/services/orderItemsService';
 
 interface CartSidebarProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
 }
 
+
 const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
-  const { getOrderItems, removeOrderItem, getTotal, clearOrderItems, updateQuantity } = useOrderItemsStore();
-  const { getOrder } = userOrderStore();
-  const {tableNumber,orderId} = useParams();
-  const orderItems  = getOrderItems();
-  const navigate = useNavigate();
+  const { orderItems, getTotal, setOrderItems, clearOrderItems, updateOrderItem } = useOrderItemsStore();
+  const  { updateOrder } = useOrderStore();
+  const  { updateTable , getTable } = useTableStore();
+  const { tableId } = useParams();
+  const [currentTable, setCurrentTable] = useState<Table | null>();
 
 
-  const orderCart = async () => {
-    const order : Order = await getOrder(orderId);
-    if(!order){
-       navigate('/');
-       return;
+  // first run
+  useEffect(() => {
+    const getOrderItems = async () => {
+      const table = await getTable(tableId);
+      if(!table) return;
+      setCurrentTable(table);
+      if(!table?.order) return;
+
+      const data = await fetchOrderItems(table?.order?._id, false);
+      setOrderItems(data);
+    }
+    getOrderItems();
+
+    // Realtime Sync
+    // const intervalId = setInterval(getOrderItems, 10000);
+    // // Cleanup the interval on component unmount.
+    // return () => clearInterval(intervalId);
+
+  }, []);
+
+  const processCheckout = async () => {
+
+    const inKitchenAndNewExist = orderItems.some((orderItem) => orderItem.status === OrderItemStatus.InKitchen || orderItem.status === OrderItemStatus.New);
+
+    if(inKitchenAndNewExist) {
+      toast.error('You cannot checkout because there are pending (new and in-kitchen) food items.', {
+        duration: 3000,
+        style: {
+          background: '#f87171',
+          color: '#fff',
+          fontWeight: 'bold',
+          padding: '16px',
+          borderRadius: '4px',
+        },
+        position: 'top-center',
+        dismissible: true
+      });
+      return;
     }
 
-    const updatedOrder = await updateOrder({
-      _id: orderId,
-      table: {
-        _model: 'table',
-        _id: order.table._id
-      },
+    // Update Order Status and Total
+    const order = {
+      _id: currentTable?.order._id,
       customer: null,
       status: OrderStatus.Completed,
       total_amount: Number(getTotal().toFixed(2))
-    })
-  
-    const updatedTable = await updateTable({
-      _id: order.table._id,
-      status: TableStatus.Available
+    }
+    updateOrder(order);
+
+    // Make table available again
+    const table = {
+      _id: currentTable?._id,
+      status: TableStatus.Available,
+      order: null
+    }
+    updateTable(table);
+
+    // Update statuses 
+    orderItems.forEach( async (orderItem) => {
+      orderItem.status = OrderItemStatus.Completed;
+      await updateOrderItem(orderItem);
     })
 
-    orderItems.forEach(async (item) => {
-      await createOrderItem({
-        order: {
-          _model: 'order',
-          _id: orderId
-        },
-        menu: {
-          _model: 'menu',
-          _id: item._id
-        },
-        price: item.price,
-        quantity: item.quantity,
-        special_instruction: 'Testing!'
-      });
+    toast.success('Successfully checkout the order!', {
+      duration: 3000,
+      style: {
+        background: '#4ade80',
+        color: '#fff',
+        fontWeight: 'bold',
+        padding: '16px',
+        borderRadius: '4px', 
+      },
+      position: 'top-center',
+      dismissible: true
     });
-
-    clearOrderItems();
-
-    toast.success('Order placed successfully!');
-
   }
 
   const sidebarVariants = {
     expanded: { width: 380, opacity: 1 },
     collapsed: { width: 0, opacity: 0 }
   };
-  
+
   return (
     <motion.div
       className={cn(
-        "h-screen border-l border-border bg-white shadow-sm z-20",
+        "h-[calc(100vh-4rem)] border-l border-border bg-white shadow-sm z-20",
         collapsed ? "hidden" : "block"
       )}
       initial="collapsed"
@@ -93,7 +124,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
     >
       <div className="flex flex-col h-full">
         <div className="p-4 border-b border-border flex items-center justify-between">
-          <h2 className="font-semibold text-lg">Cart</h2>
+          <h2 className="font-semibold text-lg">Cart</h2> <span>Table : {currentTable?.table_number}</span>
           <button
             onClick={() => setCollapsed(true)}
             className="p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200"
@@ -102,7 +133,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
             <X className="h-5 w-5" />
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <AnimatePresence initial={false}>
             {orderItems.length === 0 ? (
@@ -116,18 +147,16 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
                 <p>Your cart is empty</p>
               </motion.div>
             ) : (
-              orderItems.map((item) => (
-                <OrderItemCard
-                  key={item._id}
+              orderItems.map((item, index) => (
+                <OrderItemsCart
+                  key={item?._id || index}
                   item={item}
-                  onRemove={() => removeOrderItem(item._id)}
-                  onUpdateQuantity={(quantity) => updateQuantity(item._id, quantity)}
                 />
               ))
             )}
           </AnimatePresence>
         </div>
-        
+
         <div className="p-4 border-t border-border">
           <div className="space-y-2 mb-4">
             <div className="flex justify-between">
@@ -135,31 +164,31 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
               <span>${getTotal().toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Tax (10%)</span>
-              <span>${(getTotal() * 0.1).toFixed(2)}</span>
+              <span className="text-gray-500">Tax (0%)</span>
+              <span>${(getTotal()).toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-semibold">
               <span>Total</span>
-              <span>${(getTotal() * 1.1).toFixed(2)}</span>
+              <span>${(getTotal()).toFixed(2)}</span>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-2">
-            <button 
-              className="flex items-center justify-center p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200 btn-hover"
+            <button
+              className="flex items-center justify-center p-3 rounded-lg bg-gray-200 cursor-pointer text-gray-700 hover:bg-gray-200 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
               onClick={() => clearOrderItems()}
               disabled={orderItems.length === 0}
             >
               <Printer className="h-5 w-5 mr-2" />
               <span>Print Receipt</span>
             </button>
-            <button 
-              className="flex items-center justify-center p-3 rounded-lg bg-secondary text-white hover:bg-secondary/90 transition-colors duration-200 btn-hover"
-              disabled={orderItems.length === 0}
-              onClick={orderCart}
+            <button
+              className="flex items-center justify-center p-3 rounded-lg bg-secondary text-white hover:bg-secondary/90 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
+              disabled={orderItems.length === 0 && orderItems.every((item) => item.status === "ready")}
+              onClick={processCheckout}
             >
               <CreditCard className="h-5 w-5 mr-2" />
-              <span>Order</span>
+              <span>Checkout</span>
             </button>
           </div>
         </div>
@@ -171,63 +200,11 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
 // Placeholder icon for empty cart
 const ShoppingCart = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M3 6H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3 6H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-// Cart Item Component
-interface OrderItemCardProps {
-  item: OrderItem;
-  onRemove: () => void;
-  onUpdateQuantity: (quantity: number) => void;
-}
-
-const OrderItemCard = ({ item, onRemove, onUpdateQuantity }: OrderItemCardProps) => {
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      transition={{ duration: 0.3 }}
-      className="flex items-center p-3 border border-border rounded-lg"
-    >
-      <div className="h-14 w-14 flex-shrink-0 rounded-md overflow-hidden mr-3">
-        <img 
-          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE} 
-          alt={item.name}
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-sm truncate">{item.name}</h4>
-        <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
-      </div>
-      <div className="flex items-center">
-        <button 
-          className="p-1 rounded-full hover:bg-gray-100"
-          onClick={() => onUpdateQuantity(Math.max(1, item.quantity - 1))}
-        >
-          <Minus className="h-4 w-4" />
-        </button>
-        <span className="w-8 text-center text-sm">{item.quantity}</span>
-        <button 
-          className="p-1 rounded-full hover:bg-gray-100"
-          onClick={() => onUpdateQuantity(item.quantity + 1)}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
-        <button 
-          className="ml-2 p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors duration-200"
-          onClick={onRemove}
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
-      </div>
-    </motion.div>
-  );
-};
 
 export default CartSidebar;

@@ -6,7 +6,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 
 
 export const fetchCategories = async (): Promise<Category[]> => {
-    const response = await fetch(`${API_URL}/api/content/items/category`,{
+    const response = await fetch(`${API_URL}/api/content/tree/category`,{
         headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
     });
     if (!response.ok) throw new Error('Failed to fetch categorys');

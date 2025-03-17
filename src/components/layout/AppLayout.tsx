@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Sidebar from './Sidebar';
-import CartSidebar from './CartSidebar';
 import { ShoppingCart } from 'lucide-react';
 import { useOrderItemsStore } from '@/store/orderitem-store';
+import { useCartStore } from '@/store/cart-store';
 
 const AppLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [cartCollapsed, setCartCollapsed] = useState(false);
-  const { getOrderItems } = useOrderItemsStore();
+  const { orderItems } = useOrderItemsStore();
+  const { cartCollapsed, setCartCollapsed } = useCartStore();
   
   return (
     <div className="flex h-screen overflow-hidden">
@@ -24,7 +24,7 @@ const AppLayout = () => {
           <h1 className="text-xl font-semibold">TGI Pos</h1>
           
           <button
-            onClick={() => setCartCollapsed(false)}
+            onClick={() => setCartCollapsed(!cartCollapsed)}
             className="p-2 rounded-full hover:bg-gray-100 relative btn-hover"
             aria-label="Open cart"
           >
@@ -34,20 +34,16 @@ const AppLayout = () => {
               animate={{ scale: 1 }}
               className="absolute -top-1 -right-1 bg-secondary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
             >
-              {getOrderItems().length}
+              {orderItems.length}
             </motion.span>
           </button>
         </div>
         
-        <div className="p-6">
+        <div>
           <Outlet />
         </div>
       </main>
-      
-      <CartSidebar 
-        collapsed={cartCollapsed} 
-        setCollapsed={setCartCollapsed} 
-      />
+
     </div>
   );
 };

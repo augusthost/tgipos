@@ -5,14 +5,22 @@ const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 
-export const fetchOrderItems = async (): Promise<OrderItem[]> => {
-    const response = await fetch(`${API_URL}/api/content/items/orderitem`,{
+export const fetchOrderItems = async (orderId: string, excludeCompleted: boolean = false): Promise<OrderItem[]> => {
+    const response = await fetch(`${API_URL}/api/content/items/orderitem?populate=1&filter={order:"${orderId}"${excludeCompleted ? ',status:{$ne:"completed"}' : ''}}`,{
         headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
     });
     if (!response.ok) throw new Error('Failed to fetch orderItems');
     return response.json();
 };
 
+
+export const fetchKitchenOrderItems = async (): Promise<OrderItem[]> => {
+    const response = await fetch(`${API_URL}/api/content/items/orderitem?populate=1&sort={_created:-1}&filter={status:"in-kitchen"}`,{
+        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+    });
+    if (!response.ok) throw new Error('Failed to fetch orderItems');
+    return response.json();
+};
 
 export const fetchOrderItem = async (orderItemId : string): Promise<OrderItem[]> => {
     const response = await fetch(`${API_URL}/api/content/items/orderitem/${orderItemId}`,{
@@ -33,8 +41,8 @@ export const createOrderItem = async (orderItem: any): Promise<OrderItem> => {
     return response.json();
 };
 
-export const updateOrderItem = async (orderItem: OrderItem): Promise<OrderItem> => {
-    const response = await fetch(`${API_URL}/api/content/item/${orderItem._id}`, {
+export const updateOrderItem = async (orderItem: any): Promise<OrderItem> => {
+    const response = await fetch(`${API_URL}/api/content/item/orderitem`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY },
         body: JSON.stringify({data:orderItem}),
@@ -44,7 +52,7 @@ export const updateOrderItem = async (orderItem: OrderItem): Promise<OrderItem> 
 };
 
 export const deleteOrderItem = async (orderItemId: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/api/content/item/${orderItemId}`, { 
+    const response = await fetch(`${API_URL}/api/content/item/orderitem/${orderItemId}`, { 
         method: 'DELETE' , 
         headers: { 'Content-Type': 'application/json', 'api-key' : API_KEY }
     });

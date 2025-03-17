@@ -13,6 +13,14 @@ export const fetchTables = async (): Promise<Table[]> => {
     return response.json();
 };
 
+export const fetchTable = async (tableId: string): Promise<Table> => {
+    const response = await fetch(`${API_URL}/api/content/item/table/${tableId}?populate=1`,{
+        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+    });
+    if (!response.ok) throw new Error('Failed to fetch tables');
+    return await response.json();
+};
+
 export const createTable = async (table: Table): Promise<Table> => {
     const response = await fetch(`${API_URL}/api/content/item/table`, {
         method: 'POST',

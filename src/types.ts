@@ -17,21 +17,21 @@ export interface Menu extends BaseEntity{
   price: number;
   image: string;
   description: string;
-  category: any;
+  category: LinkModelType[];
   available: boolean;
 }
 
 export enum TableStatus{
   Available = "available",
-  Occupied = "occupied",
-  Reserved = "reserved",
+  Occupied  = "occupied",
+  Reserved  = "reserved",
 }
 
 export enum OrderStatus {
-  Pending = "pending",
-  InProgress = "in-progress",
-  Completed = "completed",
-  Cancelled = "cancelled",
+  Pending    = "pending",
+  Completed  = "completed",
+  Cancelled  = "cancelled",
+  Refunded   = "refunded",
 }
 
 export enum OrderType {
@@ -39,19 +39,29 @@ export enum OrderType {
   TakeAway = "take-away",
 }
 
+export enum OrderItemStatus {
+  New       = "new", 
+  InKitchen = "in-kitchen",
+  Ready     = "ready",
+  Cancelled = "cancelled",
+  Completed = "completed"
+}
+
 export interface Order extends BaseEntity{
-  table : any;
+  table?: any;
   customer: any;
   status: OrderStatus;
   order_type?: OrderType;
   total_amount: number;
 }
 
-export interface OrderItem extends Menu{
+export interface OrderItem extends BaseEntity{
   order: any;
   menu: any;
   quantity: number;
+  status: OrderItemStatus;
   special_instruction: string;
+  price: number
 }
 
 export interface Category extends BaseEntity{
@@ -67,4 +77,5 @@ export interface Table extends BaseEntity{
   seats?: string;
   location?:string;
   status: string;
+  order: LinkModelType
 }

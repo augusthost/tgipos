@@ -1,82 +1,92 @@
-import { OrderItem } from '@/types'
-import { create } from 'zustand'
-import { createOrder } from '@/services/orderService'
+import { OrderItem, OrderItemStatus } from '@/types';
+import { create } from 'zustand';
+import { shared } from 'use-broadcast-ts';
+import {
+    createOrderItem,
+    deleteOrderItem,
+    fetchOrderItems,
+    updateOrderItem
+} from '@/services/orderItemsService';
 
+// Define the state type for the order items store
 type OrderItemStore = {
     orderId: string | null;
+    setOrderId: (id: string) => void;
     orderItems: OrderItem[];
-    getOrderItems: () => OrderItem[];
+    setOrderItems: (orderItems: OrderItem[]) => Promise<void>;
     addOrderItem: (orderItem: OrderItem) => Promise<void>;
     removeOrderItem: (id: string) => void;
-    updateOrderItem: (orderItem: OrderItem) => void;
+    updateOrderItem: (orderItem: OrderItem) => Promise<void>;
     updateQuantity: (id: string, qty: number) => void;
     clearOrderItems: () => void;
     getTotal: () => number;
-}
+};
 
-export const useOrderItemsStore = create<OrderItemStore>((set, get) => ({
-    orderId: null,
-    orderItems: [],
+export const useOrderItemsStore = create<OrderItemStore>(
+    (set, get) => ({
+        orderId: null,
+        setOrderId: (id: string) => set({ orderId: id }),
+        orderItems: [],
+        // Fetch order items from the server and update state
+        setOrderItems: async (data) => {
+            set({ orderItems: data });
+        },
 
-    getOrderItems: () => get().orderItems,
+        // Add an order item, updating local state first, then the server
+        addOrderItem: async (orderItem: OrderItem) => {
 
-    addOrderItem: async (orderItem) => {
-        const { orderId, orderItems } = get();
-        const currentOrderId = orderId;
+            const responseItem = await createOrderItem(orderItem);
+            set((state) => ({ orderItems: [...state.orderItems, responseItem] }));
 
-        try {
-            // If this is the first item, create an order
-            // if (!currentOrderId) {
-            //     const order = await createOrder({ waiterId: 'some-waiter-id' });
-            //     currentOrderId = order._id;
-            //     set({ orderId: currentOrderId });
-            // }
+        },
 
-            // Add the item to the order
-            // await addOrderItemToOrder(currentOrderId, {
-            //     itemId: orderItem._id,
-            //     quantity: 1,
-            //     price: orderItem.price
-            // });
+        // Remove an order item from state and server
+        removeOrderItem: async (id: string) => {
+            set((state) => ({
+                orderItems: state.orderItems.filter((item) => {
+                    return item._id !== id
+                })
+            }));
+            deleteOrderItem(id);
+        },
 
-            // Update state with the new item or increment quantity
-            set((state) => {
-                const existingItem = state.orderItems.find((item) => item._id === orderItem._id);
+        // Update an order item locally and on the server
+        updateOrderItem: async (orderItem: OrderItem) => {
+            // Example: Fetch updated data before setting state
+            const updatedItem = await updateOrderItem(orderItem);
+            set((state) => ({
+                orderItems: state.orderItems.map((item) =>
+                    item._id === updatedItem._id ? { ...item, ...updatedItem } : item
+                ),
+            }));
+        },        
 
-                return {
-                    orderItems: existingItem
-                        ? state.orderItems.map((item) =>
-                              item._id === orderItem._id ? { ...item, quantity: item.quantity + 1 } : item
-                          )
-                        : [...state.orderItems, { ...orderItem, quantity: 1 }]
-                };
+        // Update the quantity of an item and synchronize with the server
+        updateQuantity: async (id: string, qty: number) => {
+
+            // update state
+            set((state) => ({
+                orderItems: state.orderItems.map((item) =>
+                    item.menu._id === id ? { ...item, quantity: qty } : item
+                )
+            }));
+
+            const updatedItem = get().orderItems.find((item) => {
+                return item._id === id;
             });
-        } catch (error) {
-            console.error('Error adding order item:', error);
+            if (!updatedItem) return;
+            updatedItem.quantity = qty;
+
+            updateOrderItem(updatedItem);
+        },
+
+        // Clear all order items
+        clearOrderItems: () => set({ orderId: null, orderItems: [] }),
+
+        // Calculate the total cost of all order items
+        getTotal: () => {
+            const items = get().orderItems.filter((item) => item.status !== OrderItemStatus.Cancelled);
+            return items.reduce((total, item) => total + item.price * item.quantity, 0)
         }
-    },
-
-    removeOrderItem: (id: string) =>
-        set((state) => ({
-            orderItems: state.orderItems.filter((item) => item._id !== id)
-        })),
-
-    updateOrderItem: (orderItem) =>
-        set((state) => ({
-            orderItems: state.orderItems.map((item) =>
-                item._id === orderItem._id ? orderItem : item
-            )
-        })),
-
-    updateQuantity: (id, qty) =>
-        set((state) => ({
-            orderItems: state.orderItems.map((item) =>
-                item._id === id ? { ...item, quantity: qty } : item
-            )
-        })),
-
-    clearOrderItems: () => set({ orderId: null, orderItems: [] }),
-
-    getTotal: () =>
-        get().orderItems.reduce((total, item) => total + item.price * item.quantity, 0)
-}));
+    })
+);

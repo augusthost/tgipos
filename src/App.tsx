@@ -11,6 +11,7 @@ import Categories from "@/pages/Categories";
 import Tables from "@/pages/Tables";
 import Orders from "@/pages/Orders";
 import NotFound from "./pages/NotFound";
+import Kitchen from "./pages/Kitchen";
 
 const queryClient = new QueryClient();
 
@@ -23,9 +24,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Tables />} />
-              <Route path="tables/:tableNumber/order/:orderId" element={<POS />} />
+              <Route path="tables/:tableId" element={<POS />} />
               <Route path="food-menus" element={<FoodMenus />} />
               <Route path="categories" element={<Categories />} />
+              <Route path="kitchen" element={<Kitchen />} />
               <Route path="orders" element={<Orders />} />
             </Route>
             <Route path="*" element={<NotFound />} />
