@@ -2,18 +2,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PlusCircle, Search, Edit, Trash } from 'lucide-react';
-import { fetchMenus } from '@/services/menuService';
 
 const FoodMenus = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [menus, setMenus] = useState([]);
 
-  useEffect(()=>{
-    (async()=>{
-      const menuItems = await fetchMenus();
-      setMenus(menuItems);
-    })()
-  },[])
   
   const filteredItems = menus.filter(item => 
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

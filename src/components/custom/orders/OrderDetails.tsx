@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@radix-ui
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { DialogHeader } from "@/components/ui/dialog";
-import { fetchOrderItems } from "@/services/orderItemsService";
+import { useFetchOrderItems } from "@/services/orderItemsService";
 
 type OrderDetailsProps = {
   open: boolean;
@@ -15,14 +15,7 @@ const OrderDetails = ({ open, onClose, order }: OrderDetailsProps) => {
 
   if (!open || !order) return null;
 
-  const [orderItems, setOrderItems] = useState<OrderItem[] | []>([]);
-
-  useEffect(() => {
-    (async () => {
-      const items = await fetchOrderItems(order._id);
-      setOrderItems(items);
-    })()
-  }, [order._id, setOrderItems])
+    const { data: orderItems, isLoading, error } = useFetchOrderItems(order?._id);
 
   const onSubmit = () => {
 

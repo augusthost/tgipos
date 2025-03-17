@@ -1,34 +1,15 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PlusCircle, Search, Edit, Trash, Check, X } from 'lucide-react';
-import { fetchKitchenOrderItems } from '@/services/orderItemsService';
+import { PlusCircle, Search, Check, X } from 'lucide-react';
+import { useFetchKitchenOrderItems, useUpdateOrderItem } from '@/services/orderItemsService';
 import { OrderItemStatus } from '@/types';
-import { useOrderItemsStore } from '@/store/orderitem-store';
 import { toast } from 'sonner';
 
 const Kitchen = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [orderItems, setOrderItems] = useState([]);
-  const { updateOrderItem } = useOrderItemsStore();
-
-  useEffect(() => {
-    // Define the async function to fetch order items.
-    const fetchAndSetOrderItems = async () => {
-      try {
-        const items = await fetchKitchenOrderItems();
-        setOrderItems(items);
-      } catch (error) {
-        console.error("Error fetching order items:", error);
-      }
-    };
-    fetchAndSetOrderItems();
-
-    // Realtime Sync
-    // Immediately fetch the order items, then poll every 2000ms (2 seconds).
-    // const intervalId = setInterval(fetchAndSetOrderItems, 10000);
-    // return () => clearInterval(intervalId);
-  }, []);
+  const { data: orderItems } = useFetchKitchenOrderItems();
+  const { mutate: updateOrderItem } = useUpdateOrderItem();
 
   const filteredItems = orderItems.length > 0 ? orderItems.filter(item =>
     item?.menu?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -38,10 +19,6 @@ const Kitchen = () => {
   const updateStatus = async (item, status: string) => {
     item.status = status;
     updateOrderItem(item);
-
-    // update current table
-    const allItems = orderItems.filter(i => i._id !== item._id);
-    setOrderItems(allItems);
 
     if (status === 'cancel') {
       toast.error(`Canceled ${item.menu.name}`, {
@@ -127,8 +104,8 @@ const Kitchen = () => {
                     <div className="flex items-center">
                       <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
-                          alt={item.name}
+                          src={item?.menu?.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+                          alt={item?.menu?.name}
                           className="h-full w-full object-cover"
                         />
                       </div>

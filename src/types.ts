@@ -70,6 +70,7 @@ export interface Category extends BaseEntity{
   image:string;
   _pid: string,
   _o: string;
+  _children: Category[]
 }
 
 export interface Table extends BaseEntity{

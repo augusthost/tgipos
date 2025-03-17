@@ -1,42 +1,62 @@
-// services/categoryService.ts
-import { Category } from '@/types'
+// services/categoryService
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Category } from '@/types';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-
-export const fetchCategories = async (): Promise<Category[]> => {
-    const response = await fetch(`${API_URL}/api/content/tree/category`,{
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+const fetcher = async (url: string, options?: RequestInit) => {
+    const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', 'api-key': API_KEY },
+        ...options,
     });
-    if (!response.ok) throw new Error('Failed to fetch categorys');
+    if (!response.ok) throw new Error('Network response was not ok');
     return response.json();
 };
 
-export const createCategory = async (category: Category): Promise<Category> => {
-    const response = await fetch(`${API_URL}/api/content/item/category`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY},
-        body: JSON.stringify(category),
+export const useFetchCategories = () => 
+    useQuery<Category[]>({
+        queryKey: ['categories'],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/category?populate=1`),
     });
-    if (!response.ok) throw new Error('Failed to create category');
-    return response.json();
+
+export const useFetchCategory = (categoryId: string) => 
+    useQuery<Category>({
+        queryKey: ['category', categoryId],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/category/${categoryId}`),
+    });
+
+export const useCreateCategory = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (category: Partial<Category>) => 
+            fetcher(`${API_URL}/api/content/item/category`, {
+                method: 'POST',
+                body: JSON.stringify({ data: category }),
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    });
 };
 
-export const updateCategory = async (category: Category): Promise<Category> => {
-    const response = await fetch(`${API_URL}/api/content/item/${category._id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY },
-        body: JSON.stringify(category),
+export const useUpdateCategory = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (category: Partial<Category>) => 
+            fetcher(`${API_URL}/api/content/item/category`, {
+                method: 'POST',
+                body: JSON.stringify({ data: category }),
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
     });
-    if (!response.ok) throw new Error('Failed to update category');
-    return response.json();
 };
 
-export const deleteCategory = async (categoryId: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/api/content/item/${categoryId}`, { 
-        method: 'DELETE' , 
-        headers: { 'Content-Type': 'application/json', 'api-key' : API_KEY }
+export const useDeleteCategory = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (categoryId: string) => 
+            fetcher(`${API_URL}/api/content/item/category/${categoryId}`, {
+                method: 'DELETE',
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
     });
-    if (!response.ok) throw new Error('Failed to delete category');
 };

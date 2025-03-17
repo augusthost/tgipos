@@ -1,10 +1,10 @@
-import { OrderItem } from "@/types";
+import { OrderItem, OrderItemStatus } from "@/types";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { DialogHeader } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { updateOrderItem } from "@/services/orderItemsService";
+import { useUpdateOrderItem } from "@/services/orderItemsService";
 
 type SpecialInstructionModalProps = {
   open: boolean;
@@ -14,14 +14,26 @@ type SpecialInstructionModalProps = {
 
 const SpecialInstructionModal = ({ open, onClose, item }: SpecialInstructionModalProps) => {
   const [instruction, setInstruction] = useState("");
+  const { mutate: updateOrderItem } = useUpdateOrderItem();
 
   useEffect(() => {
     setInstruction(item.special_instruction);
   }, [item.special_instruction]);
 
   const onSubmit = async (instruction: string) => {
-     item.special_instruction = instruction;
-     await updateOrderItem(item);
+     const updatedItem: Partial<OrderItem> = { 
+      ...item, 
+      special_instruction: instruction
+    };
+
+     await updateOrderItem(updatedItem,{
+      onSuccess: () => {
+        console.log('Order item updated successfully!');
+      },
+      onError: (err) => {
+          console.error('Error updating order item:', err);
+      }
+     });
   };
 
   return (

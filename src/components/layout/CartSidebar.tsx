@@ -5,15 +5,14 @@ import {
   Printer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { OrderItemStatus, OrderStatus, Table, TableStatus } from '@/types';
-import { useOrderItemsStore } from '@/store/orderitem-store';
+import { OrderItem, OrderItemStatus, OrderStatus, Table, TableStatus } from '@/types';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
-import { useOrderStore } from '@/store/order-store';
-import { useTableStore } from '@/store/table-store';
+import { useState } from 'react';
 import OrderItemsCart from '../custom/order-items/OrderItemsCart';
-import { fetchOrderItems } from '@/services/orderItemsService';
+import { useFetchOrderItems, useUpdateOrderItem } from '@/services/orderItemsService';
+import { useFetchTable, useUpdateTable } from '@/services/tableService';
+import { useUpdateOrder } from '@/services/orderService';
 
 interface CartSidebarProps {
   collapsed: boolean;
@@ -22,43 +21,30 @@ interface CartSidebarProps {
 
 
 const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
-  const { orderItems, getTotal, setOrderItems, clearOrderItems, updateOrderItem } = useOrderItemsStore();
-  const  { updateOrder } = useOrderStore();
-  const [orderId, setOrderId] = useState('');
-  const  { updateTable , getTable } = useTableStore();
-  const { tableId } = useParams();
-  const [currentTable, setCurrentTable] = useState<Table | null>();
+  const [orderId] = useState('');
+  const {tableId} = useParams();
+  const [currentTable] = useState<Table | null>();
 
+  const { data: table } = useFetchTable(tableId);
+  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id,!!table?.order?._id);
+  const { mutate: updateOrderItem } = useUpdateOrderItem();
+  const { mutate: updateOrder } = useUpdateOrder();
+  const { mutate: updateTable } = useUpdateTable();
 
-  // first run
-  useEffect(() => {
-    const getOrderItems = async () => {
-      const table = await getTable(tableId);
-      if(!table) return;
-      setCurrentTable(table);
-      if(!table?.order){
-         setOrderItems([]);
-         return;
-      };
-      setOrderId(table?.order?._id);
-      const data = await fetchOrderItems(table?.order?._id);
-      setOrderItems(data);
-    }
-    getOrderItems();
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-    // Realtime Sync
-    // const intervalId = setInterval(getOrderItems, 10000);
-    // // Cleanup the interval on component unmount.
-    // return () => clearInterval(intervalId);
-
-  }, []);
+  const getTotal = () =>  {
+    const items = orderItems.filter((item) => item.status !== OrderItemStatus.Cancelled);
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+  }
 
   const processCheckout = async () => {
 
     const inKitchenAndNewExist = orderItems.some((orderItem) => orderItem.status === OrderItemStatus.InKitchen || orderItem.status === OrderItemStatus.New);
 
     if(inKitchenAndNewExist) {
-      toast.error('You cannot checkout because there are pending (new and in-kitchen) food items.', {
+      toast.error('You cannot checkout because there are pending (new and in-kitchen) food orderItems.', {
         duration: 3000,
         style: {
           background: '#f87171',
@@ -94,7 +80,20 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
     orderItems.forEach( async (orderItem) => {
       if(orderItem.status === OrderItemStatus.Cancelled) return;
       orderItem.status = OrderItemStatus.Completed;
-      await updateOrderItem(orderItem);
+      
+      const updatedItem: Partial<OrderItem> = { 
+        ...orderItem, 
+        status: 'completed' as OrderItemStatus
+    };  
+      updateOrderItem(updatedItem, {
+          onSuccess: () => {
+              console.log('Order item updated successfully!');
+          },
+          onError: (err) => {
+              console.error('Error updating order item:', err);
+          },
+      });
+
     })
 
     toast.success('Successfully checkout the order!', {
@@ -182,7 +181,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
           <div className="grid grid-cols-2 gap-2">
             <button
               className="flex items-center justify-center p-3 rounded-lg bg-gray-200 cursor-pointer text-gray-700 hover:bg-gray-200 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
-              onClick={() => clearOrderItems()}
+              onClick={()=>{}}
               disabled={orderItems.length === 0}
             >
               <Printer className="h-5 w-5 mr-2" />

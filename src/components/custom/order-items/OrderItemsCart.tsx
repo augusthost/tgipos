@@ -7,13 +7,12 @@ import {
   NotebookIcon
 } from 'lucide-react';
 import { OrderItem, OrderItemStatus, Table, TableStatus } from '@/types';
-import { useOrderItemsStore } from '@/store/orderitem-store';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SpecialInstructionModal from '@/components/custom/SpecialInstructionModal';
 import { useParams } from 'react-router-dom';
-import { useTableStore } from '@/store/table-store';
-import { updateTable } from '@/services/tableService';
-import { deleteOrder } from '@/services/orderService';
+import { useFetchTable, useUpdateTable } from '@/services/tableService';
+import { useDeleteOrder } from '@/services/orderService';
+import { useFetchOrderItems, useDeleteOrderItem, useUpdateOrderItem } from '@/services/orderItemsService';
 
 // Cart Item Component
 interface OrderItemsCartProps {
@@ -25,9 +24,13 @@ interface OrderItemsCartProps {
 const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
 
   const [openSpecialInstruction, setOpenSpecialInstruction] = useState(false);
-  const { orderItems, updateOrderItem, removeOrderItem, updateQuantity } = useOrderItemsStore();
   const { tableId } = useParams();
-
+  const { data: table } = useFetchTable(tableId);
+  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id, !!table?.order?._id);
+  const { mutate: updateTable } = useUpdateTable();
+  const { mutate: deleteOrder } = useDeleteOrder();
+  const { mutate: updateOrderItem } = useUpdateOrderItem();
+  const {mutate: deleteOrderItem} = useDeleteOrderItem();
 
   const removeFromCart = (id: string, orderId: string) => {
     if (orderItems.length === 1) {
@@ -39,7 +42,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
       deleteOrder(orderId);
     }
 
-    removeOrderItem(id)
+    deleteOrderItem(id)
   }
 
   const getStatusColor = (status: string) => {
@@ -89,7 +92,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
         <div className='flex items-center'>
           {(item.status === 'new' || item.status === 'in-kitchen') && (<button
             className="p-1 rounded-full hover:bg-gray-100"
-            onClick={() => updateQuantity(item?._id, Math.max(1, item.quantity - 1))}
+            onClick={() => updateOrderItem({...item, quantity: Math.max(1, item.quantity - 1)})}
           >
             <Minus className="h-4 w-4" />
           </button>)}
@@ -98,7 +101,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
 
           {(item.status === 'new' || item.status === 'in-kitchen') && (<button
             className="p-1 rounded-full hover:bg-gray-100"
-            onClick={() => updateQuantity(item?._id, item.quantity + 1)}
+            onClick={() => updateOrderItem({...item, quantity: Math.max(1, item.quantity + 1)})}
           >
             <Plus className="h-4 w-4" />
           </button>)}

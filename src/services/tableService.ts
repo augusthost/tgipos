@@ -1,50 +1,68 @@
-// services/tableService.ts
-import { Table } from '@/types'
+// services/tableService
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Table } from '@/types';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-
-export const fetchTables = async (): Promise<Table[]> => {
-    const response = await fetch(`${API_URL}/api/content/items/table`,{
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+const fetcher = async (url: string, options?: RequestInit) => {
+    const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', 'api-key': API_KEY },
+        ...options,
     });
-    if (!response.ok) throw new Error('Failed to fetch tables');
+    if (!response.ok) throw new Error('Network response was not ok');
     return response.json();
 };
 
-export const fetchTable = async (tableId: string): Promise<Table> => {
-    const response = await fetch(`${API_URL}/api/content/item/table/${tableId}?populate=1`,{
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+export const useFetchTables = () =>
+    useQuery<Table[]>({
+        queryKey: ['tables'],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/table?populate=1`),
     });
-    if (!response.ok) throw new Error('Failed to fetch tables');
-    return await response.json();
+
+export const useFetchKitchenTables = () =>
+    useQuery<Table[]>({
+        queryKey: ['kitchenTables'],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/table?populate=1&sort={_created:-1}&filter={status:"in-kitchen"}`),
+    });
+
+export const useFetchTable = (tableId: string) =>
+    useQuery<Table>({
+        queryKey: ['table', tableId],
+        queryFn: () => fetcher(`${API_URL}/api/content/item/table/${tableId}`),
+    });
+
+export const useCreateTable = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (table: Partial<Table>) =>
+            fetcher(`${API_URL}/api/content/item/table`, {
+                method: 'POST',
+                body: JSON.stringify({ data: table }),
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tables'] }),
+    });
 };
 
-export const createTable = async (table: Table): Promise<Table> => {
-    const response = await fetch(`${API_URL}/api/content/item/table`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY},
-        body: JSON.stringify({data:table}),
+export const useUpdateTable = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (table: Partial<Table>) =>
+            fetcher(`${API_URL}/api/content/item/table`, {
+                method: 'POST',
+                body: JSON.stringify({ data: table }),
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tables'] }),
     });
-    if (!response.ok) throw new Error('Failed to create table');
-    return response.json();
 };
 
-export const updateTable = async (table: Table): Promise<Table> => {
-    const response = await fetch(`${API_URL}/api/content/item/table`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY },
-        body: JSON.stringify({data:table}),
+export const useDeleteTable = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (tableId: string) =>
+            fetcher(`${API_URL}/api/content/item/table/${tableId}`, {
+                method: 'DELETE',
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tables'] }),
     });
-    if (!response.ok) throw new Error('Failed to update table');
-    return response.json();
-};
-
-export const deleteTable = async (tableId: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/api/content/item/${tableId}`, { 
-        method: 'DELETE' , 
-        headers: { 'Content-Type': 'application/json', 'api-key' : API_KEY }
-    });
-    if (!response.ok) throw new Error('Failed to delete table');
 };

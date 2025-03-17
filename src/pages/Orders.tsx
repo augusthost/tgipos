@@ -1,24 +1,17 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Eye, Printer, Clock, CheckCircle, XCircle } from 'lucide-react';
-import { fetchOrders } from '@/services/orderService';
-import { useOrderStore } from '@/store/order-store';
 import OrderDetails from '@/components/custom/orders/OrderDetails';
+import { useFetchOrders } from '@/services/orderService';
 
 const Orders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const { orders, setOrders } = useOrderStore();
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-    useEffect(() => {
-      (async () => {
-        const orders = await fetchOrders();
-        setOrders(orders);
-      })()
-    }, [])
-  
+  const {data: orders, isLoading, error} = useFetchOrders();
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchQuery
       ? order._id.toLowerCase().includes(searchQuery.toLowerCase()) 

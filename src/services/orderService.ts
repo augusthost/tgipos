@@ -1,51 +1,68 @@
-// services/orderService.ts
-import { Order } from '@/types'
+// services/orderService
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Order } from '@/types';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-
-export const fetchOrders = async (): Promise<Order[]> => {
-    const response = await fetch(`${API_URL}/api/content/items/order?populate=1&sort={_created:-1}`,{
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+const fetcher = async (url: string, options?: RequestInit) => {
+    const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', 'api-key': API_KEY },
+        ...options,
     });
-    if (!response.ok) throw new Error('Failed to fetch orders');
+    if (!response.ok) throw new Error('Network response was not ok');
     return response.json();
 };
 
-
-export const fetchOrder = async (orderId : string): Promise<Order> => {
-    const response = await fetch(`${API_URL}/api/content/item/order/${orderId}?populate=1`,{
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY}
+export const useFetchOrders = () => 
+    useQuery<Order[]>({
+        queryKey: ['orders'],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/order?populate=1`),
     });
-    if (!response.ok) throw new Error('Failed to fetch orders');
-    return response.json();
+
+export const useFetchKitchenOrders = () => 
+    useQuery<Order[]>({
+        queryKey: ['kitchenOrders'],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/order?populate=1&sort={_created:-1}&filter={status:"in-kitchen"}`),
+    });
+
+export const useFetchOrder = (orderId: string) => 
+    useQuery<Order>({
+        queryKey: ['order', orderId],
+        queryFn: () => fetcher(`${API_URL}/api/content/items/order/${orderId}`),
+    });
+
+export const useCreateOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (order: Partial<Order>) => 
+            fetcher(`${API_URL}/api/content/item/order`, {
+                method: 'POST',
+                body: JSON.stringify({ data: order }),
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orders'] }),
+    });
 };
 
-export const createOrder = async (order: Order): Promise<Order> => {
-    const response = await fetch(`${API_URL}/api/content/item/order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY},
-        body: JSON.stringify({data:order}),
+export const useUpdateOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (order: Partial<Order>) => 
+            fetcher(`${API_URL}/api/content/item/order`, {
+                method: 'POST',
+                body: JSON.stringify({ data: order }),
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orders'] }),
     });
-    if (!response.ok) throw new Error('Failed to create order');
-    return response.json();
 };
 
-export const updateOrder = async (order: Order): Promise<Order> => {
-    const response = await fetch(`${API_URL}/api/content/item/order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'api-key' : API_KEY },
-        body: JSON.stringify({data:order}),
+export const useDeleteOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (orderId: string) => 
+            fetcher(`${API_URL}/api/content/item/order/${orderId}`, {
+                method: 'DELETE',
+            }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orders'] }),
     });
-    if (!response.ok) throw new Error('Failed to update order');
-    return response.json();
-};
-
-export const deleteOrder = async (orderId: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/api/content/item/order/${orderId}`, { 
-        method: 'DELETE' , 
-        headers: { 'Content-Type': 'application/json', 'api-key' : API_KEY }
-    });
-    if (!response.ok) throw new Error('Failed to delete order');
 };

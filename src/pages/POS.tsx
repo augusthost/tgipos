@@ -1,52 +1,40 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, ShoppingCart } from 'lucide-react';
 import { Menu, Order, OrderItem, OrderItemStatus, OrderStatus, OrderType, Table, TableStatus } from '@/types';
-import { useOrderItemsStore } from '@/store/orderitem-store';
-import { fetchMenus } from '@/services/menuService';
-import { fetchCategories } from '@/services/categoryService';
 import { useParams } from 'react-router-dom';
 import CartSidebar from '@/components/layout/CartSidebar';
-import { useCartStore } from '@/store/cart-store';
-import { createOrder } from '@/services/orderService';
-import { useTableStore } from '@/store/table-store';
-import { updateTable } from '@/services/tableService';
+import { useCreateOrder } from '@/services/orderService';
+import { useFetchTable, useUpdateTable } from '@/services/tableService';
+import { useCreateOrderItem, useFetchOrderItems } from '@/services/orderItemsService';
+import { useFetchMenus } from '@/services/menuService';
+import { useFetchCategories } from '@/services/categoryService';
 
 const POS = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const { orderItems, addOrderItem } = useOrderItemsStore();
-  const [ orderId, setOrderId ] = useState('');
-  const { getTable } = useTableStore();
-  const [menus, setMenus] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [orderId, setOrderId] = useState('');
   const { tableId } = useParams();
-  const { cartCollapsed, setCartCollapsed } = useCartStore();
+  const [cartCollapsed, setCartCollapsed] = useState(false);
   const [subcategories, setSubcategories] = useState([]);
 
-  useEffect(() => {
-    (async () => {
-      const menuItems = await fetchMenus();
-      setMenus(menuItems);
 
-      const categoryItems = await fetchCategories();
-      setCategories(categoryItems);
-    })()
-  }, [])
+  const { data: table } = useFetchTable(tableId);
+  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id, !!table?.order?._id);
+  const { data: menus } = useFetchMenus();
+  const { mutateAsync: createOrder } = useCreateOrder();
+  const { mutate: updateTable } = useUpdateTable();
+  const { mutate: addOrderItem } = useCreateOrderItem();
+  const { data: categories } = useFetchCategories();
 
+  useEffect(()=>{
+    if(table){
+      setOrderId(table?.order?._id)
+    }
+  },[table])
 
-  useEffect(() => {
-    const category = categories.find((cat) => cat._id === selectedCategory);
-    const subCategory = categories.find((cat) =>
-      cat._children.some((sub) => sub._id === selectedCategory)
-    );
-
-    setSubcategories(category?._children.length ? category._children : subCategory?._children || []);
-  }, [selectedCategory, setSubcategories, categories]);
-
-
-  const filteredItems = menus.filter((item) => {
+  const filteredItems = menus ? menus.filter((item) => {
     // Match Category
     const matchesCategory = !selectedCategory || item.category?.some((cat) => cat._id === selectedCategory);
 
@@ -55,12 +43,12 @@ const POS = () => {
       [item.name, item.description].some((text) => text.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesCategory && matchesSearch;
-  });
+  }) : [];
 
 
 
   const createNewOrder = async (table: Table) => {
-    const order = await createOrder({
+    const order = {
       table: {
         _model: 'table',
         _id: table?._id
@@ -69,8 +57,16 @@ const POS = () => {
       order_type: OrderType.DineIn,
       total_amount: 0,
       customer: null
-    });
-    return order;
+    };
+
+    try {
+      const createdOrder = await createOrder(order);
+      console.log("Created Order:", createdOrder);
+      return createdOrder;
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
   }
 
   const updateTableStatus = async (table: Table, order: Order) => {
@@ -103,34 +99,30 @@ const POS = () => {
       special_instruction: ''
     }
 
-    addOrderItem(orderItem);
+    await addOrderItem(orderItem);
   }
 
-  // If user refresh the page.
-  useEffect(() => {
-    (async () => {
-      if (!orderId) {
-        const table = await getTable(tableId);
-        setOrderId(table?.order?._id);
-      }
-    })()
-  }, [orderId])
-
-  const addToCart = async (item: OrderItem) => {
+  const addToCart = async (item: any) => {
     // if it's NOT the 1st time
-    if (orderItems.length > 0 && orderId) {
+    console.log('Condition!!');
+    console.log(orderItems,orderId);
+    if (orderId) {
+      console.log('More than 1 order items')
       addNewOrderItem(item, orderId)
       return;
     }
 
-
-    const table = await getTable(tableId);
     // Step 1
     const order = await createNewOrder(table);
+    if (!order) return;
+
     // Step 2
+    console.log('created order')
     updateTableStatus(table, order);
     addNewOrderItem(item, order?._id);
-    setOrderId(order?._id)
+    setOrderId(order?._id) // save order id
+    console.log(order?._id)
+    console.log('save order id')
 
   }
 
@@ -155,6 +147,13 @@ const POS = () => {
               className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all duration-200"
             />
           </div>
+          <button
+            onClick={() => setCartCollapsed(!cartCollapsed)}
+            className="p-2 rounded-full hover:bg-gray-100 relative btn-hover"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="h-5 w-5" />
+          </button>
         </div>
 
         <div className="flex space-x-2 overflow-x-auto pb-4 -mx-1 px-1">

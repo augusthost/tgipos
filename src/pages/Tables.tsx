@@ -1,29 +1,12 @@
 
-import { createOrder } from '@/services/orderService';
-import { fetchTables, updateTable } from '@/services/tableService';
-import { useOrderStore } from '@/store/order-store';
-import { useTableStore } from '@/store/table-store';
-import { Order, OrderStatus, OrderType, Table, TableStatus } from '@/types';
+import { useFetchTables } from '@/services/tableService';
 import { motion } from 'framer-motion';
 import { PlusCircle } from 'lucide-react';
-import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 const Tables = () => {
-  const navigate = useNavigate();
-
-  const { getTables, setTables } = useTableStore();
-  const tables = getTables();
-  const { addOrder } = useOrderStore();
-
-  useEffect(() => {
-    (async () => {
-      const menuItems = await fetchTables();
-      setTables(menuItems);
-    })()
-  }, [setTables])
-
+  const {data: tables, isLoading} = useFetchTables();
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'available':
