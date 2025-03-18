@@ -30,7 +30,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
   const { mutate: updateTable } = useUpdateTable();
   const { mutate: deleteOrder } = useDeleteOrder();
   const { mutate: updateOrderItem } = useUpdateOrderItem();
-  const {mutate: deleteOrderItem} = useDeleteOrderItem();
+  const { mutate: deleteOrderItem } = useDeleteOrderItem();
 
   const removeFromCart = (id: string, orderId: string) => {
     if (orderItems.length === 1) {
@@ -72,27 +72,26 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -50 }}
       transition={{ duration: 0.3 }}
-      className={`flex items-center p-3 border border-border rounded-lg relative ${item.special_instruction && 'pb-6'}`}
+      className={`p-3 border border-border rounded-lg relative ${item.special_instruction && 'pb-6'}`}
     >
       <span className={`text-sm border px-2 py-[0.01rem] rounded-full text-gray-600 bg-white absolute top-2 -left-2 ${getStatusColor(item.status)}`}>{item.status}</span>
-      <div className="h-14 w-14 flex-shrink-0 rounded-md overflow-hidden mr-3">
-        <img
-          src={item?.menu?.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
-          alt={item?.menu?.name}
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-sm truncate">{item?.menu?.name}</h4>
-        <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
-      </div>
-      <div>
-
+      <div className="flex gap-2">
+        <div className="h-14 w-14 flex-shrink-0 rounded-md overflow-hidden mr-3">
+          <img
+            src={item?.menu?.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+            alt={item?.menu?.name}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-sm truncate">{item?.menu?.name}</h4>
+          <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
+        </div>
 
         <div className='flex items-center'>
           {(item.status === 'new' || item.status === 'in-kitchen') && (<button
             className="p-1 rounded-full hover:bg-gray-100"
-            onClick={() => updateOrderItem({...item, quantity: Math.max(1, item.quantity - 1)})}
+            onClick={() => updateOrderItem({ ...item, quantity: Math.max(1, item.quantity - 1) })}
           >
             <Minus className="h-4 w-4" />
           </button>)}
@@ -101,7 +100,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
 
           {(item.status === 'new' || item.status === 'in-kitchen') && (<button
             className="p-1 rounded-full hover:bg-gray-100"
-            onClick={() => updateOrderItem({...item, quantity: Math.max(1, item.quantity + 1)})}
+            onClick={() => updateOrderItem({ ...item, quantity: Math.max(1, item.quantity + 1) })}
           >
             <Plus className="h-4 w-4" />
           </button>)}
@@ -113,41 +112,44 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
-
-        {(item.status === 'new' || item.status === 'in-kitchen') && <div className='flex items-center justify-end gap-2'>
-          <button
-            onClick={() => setOpenSpecialInstruction(true)}
-            className="p-1 rounded-full flex gap-2 hover:bg-gray-100 text-xs btn-hover"
-            aria-label="Instruction"
-          >
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-            >
-              <NotebookIcon className="h-4 w-4" />
-            </motion.span>
-          </button>
-          <button
-            onClick={() => setToKitchen(item)}
-            className="p-1 rounded-full flex gap-2 hover:bg-gray-100 text-xs btn-hover"
-            aria-label="Instruction"
-          >
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-            >
-              <ChefHatIcon className="h-4 w-4" />
-            </motion.span>
-          </button>
-        </div>}
-
       </div>
+
+      {<div className='flex items-center justify-between gap-2 mb-2'>
+        {item.status === 'new' && <button
+          onClick={() => setOpenSpecialInstruction(true)}
+          className="w-full text-xs text-gray-700 hover:text-gray-900"
+          aria-label="Instruction"
+        >
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="flex gap-2 items-center"
+          >
+            <NotebookIcon className="h-4 w-4" /> <span>Note</span>
+          </motion.span>
+        </button>}
+
+        {(['new','cancelled'].includes(item.status)) && <button
+          onClick={() => setToKitchen(item)}
+          className="w-full text-xs text-gray-700 hover:text-gray-900"
+          aria-label="Instruction"
+        >
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="flex gap-2 items-center justify-end"
+          >
+            <ChefHatIcon className="h-4 w-4" /> <span>Send to kitchen</span>
+          </motion.span>
+        </button>}
+        
+      </div>}
       <SpecialInstructionModal
         open={openSpecialInstruction}
         onClose={() => setOpenSpecialInstruction(false)}
         item={item}
       />
-      {item.special_instruction && <span className='text-xs text-gray-400 absolute bottom-2 left-2'>{item.special_instruction}</span>}
+      {item.special_instruction && <span className='text-xs text-gray-400 absolute bottom-2 left-3'>{item.special_instruction}</span>}
     </motion.div>
   );
 };

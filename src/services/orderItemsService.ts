@@ -14,13 +14,15 @@ const fetcher = async (url: string, options?: RequestInit) => {
     return response.json();
 };
 
-export const useFetchOrderItems = (orderId: string, enabled: boolean) => 
-    useQuery<OrderItem[]>({
+export const useFetchOrderItems = (orderId: string, allStatuses? : boolean, enabled? : boolean) => {
+    const status = !allStatuses ? `,status:{$ne:"completed"}` : '';
+    return useQuery<OrderItem[]>({
         queryKey: ['orderItems', orderId],
-        queryFn: () => fetcher(`${API_URL}/api/content/items/orderitem?populate=1&filter={order:"${orderId}"}`),
-        enabled, // Ensures it only runs when orderId is available,
-        placeholderData: []
+        queryFn: () => fetcher(`${API_URL}/api/content/items/orderitem?populate=1&filter={order:"${orderId}"${status}}`),
+        placeholderData: [],
+        enabled
     });
+}
 
 
 export const useFetchKitchenOrderItems = () => 
@@ -44,7 +46,6 @@ export const useCreateOrderItem = () => {
                 body: JSON.stringify({ data: orderItem }),
         }),
         onSuccess: (_, variables) => {
-            console.log(variables)
             if (variables.order) {
                 // Invalidate the cache to mark it as stale
                 queryClient.invalidateQueries({ queryKey: ['orderItems', variables.order?._id] });
@@ -61,7 +62,10 @@ export const useUpdateOrderItem = () => {
                 method: 'POST',
                 body: JSON.stringify({ data: orderItem }),
             }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orderItems'] }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['kitchenOrderItems'] });
+            queryClient.invalidateQueries({ queryKey: ['orderItems'] });
+        },
     });
 };
 
@@ -75,3 +79,12 @@ export const useDeleteOrderItem = () => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orderItems'] }),
     });
 };
+
+export const useClearOrderItems = () =>{
+    const queryClient = useQueryClient();
+
+    return (orderId: string) => {
+        queryClient.setQueryData(['orderItems', orderId], []);
+        queryClient.invalidateQueries({ queryKey: ['orderItems', orderId] });
+    };
+}

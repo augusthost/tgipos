@@ -26,14 +26,7 @@ const SpecialInstructionModal = ({ open, onClose, item }: SpecialInstructionModa
       special_instruction: instruction
     };
 
-     await updateOrderItem(updatedItem,{
-      onSuccess: () => {
-        console.log('Order item updated successfully!');
-      },
-      onError: (err) => {
-          console.error('Error updating order item:', err);
-      }
-     });
+     await updateOrderItem(updatedItem);
   };
 
   return (

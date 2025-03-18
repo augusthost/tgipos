@@ -8,8 +8,12 @@ import { toast } from 'sonner';
 
 const Kitchen = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: orderItems } = useFetchKitchenOrderItems();
+  const { data: orderItems , isLoading, error} = useFetchKitchenOrderItems();
   const { mutate: updateOrderItem } = useUpdateOrderItem();
+
+  if(isLoading){
+    return <p>Loading...</p>;
+  }
 
   const filteredItems = orderItems.length > 0 ? orderItems.filter(item =>
     item?.menu?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||

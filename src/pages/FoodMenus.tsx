@@ -2,12 +2,16 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PlusCircle, Search, Edit, Trash } from 'lucide-react';
+import { useFetchMenus } from '@/services/menuService';
 
 const FoodMenus = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [menus, setMenus] = useState([]);
-
+  const {data: menus, isLoading, error} = useFetchMenus();
   
+  if(isLoading){
+    return <p>Loading...</p>;
+  }
+
   const filteredItems = menus.filter(item => 
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -57,7 +61,7 @@ const FoodMenus = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredItems && filteredItems.map((item) => (
                 <motion.tr 
-                  key={item.id}
+                  key={item?._id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}

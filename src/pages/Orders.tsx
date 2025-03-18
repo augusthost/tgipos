@@ -12,6 +12,11 @@ const Orders = () => {
 
   const {data: orders, isLoading, error} = useFetchOrders();
 
+
+  if(isLoading){
+    return <p>Loading...</p>;
+  }
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchQuery
       ? order._id.toLowerCase().includes(searchQuery.toLowerCase()) 

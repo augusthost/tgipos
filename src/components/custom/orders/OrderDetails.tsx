@@ -13,10 +13,12 @@ type OrderDetailsProps = {
 
 const OrderDetails = ({ open, onClose, order }: OrderDetailsProps) => {
 
-  if (!open || !order) return null;
+    const { data: orderItems, isLoading, error } = useFetchOrderItems(order?._id, true);
 
-    const { data: orderItems, isLoading, error } = useFetchOrderItems(order?._id);
-
+  if(isLoading){
+    return <div>Loading...</div>
+  }
+  
   const onSubmit = () => {
 
   }

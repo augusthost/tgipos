@@ -6,30 +6,29 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OrderItem, OrderItemStatus, OrderStatus, Table, TableStatus } from '@/types';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import OrderItemsCart from '../custom/order-items/OrderItemsCart';
-import { useFetchOrderItems, useUpdateOrderItem } from '@/services/orderItemsService';
+import { useClearOrderItems, useFetchOrderItems, useUpdateOrderItem } from '@/services/orderItemsService';
 import { useFetchTable, useUpdateTable } from '@/services/tableService';
 import { useUpdateOrder } from '@/services/orderService';
 
 interface CartSidebarProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
+  table: Table,
+  orderId: string
 }
 
 
-const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
-  const [orderId] = useState('');
-  const {tableId} = useParams();
-  const [currentTable] = useState<Table | null>();
-
-  const { data: table } = useFetchTable(tableId);
-  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id,!!table?.order?._id);
+const CartSidebar = ({ collapsed, setCollapsed, table, orderId }: CartSidebarProps) => {
+  const { data: orderItems, isLoading, error } = useFetchOrderItems(orderId);
   const { mutate: updateOrderItem } = useUpdateOrderItem();
+  const clearOrderItems = useClearOrderItems();
   const { mutate: updateOrder } = useUpdateOrder();
   const { mutate: updateTable } = useUpdateTable();
+  const navigate = useNavigate();
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -60,40 +59,30 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
     }
 
     // Update Order Status and Total
-    const order = {
-      _id: currentTable?.order._id,
+    updateOrder({
+      _id: table?.order._id,
       customer: null,
       status: OrderStatus.Completed,
       total_amount: Number(getTotal().toFixed(2))
-    }
-    updateOrder(order);
+    });
 
     // Make table available again
-    const table = {
-      _id: currentTable?._id,
+    updateTable({
+      _id: table?._id,
       status: TableStatus.Available,
       order: null
-    }
-    updateTable(table);
+    });
 
     // Update statuses 
     orderItems.forEach( async (orderItem) => {
-      if(orderItem.status === OrderItemStatus.Cancelled) return;
-      orderItem.status = OrderItemStatus.Completed;
-      
-      const updatedItem: Partial<OrderItem> = { 
-        ...orderItem, 
-        status: 'completed' as OrderItemStatus
-    };  
-      updateOrderItem(updatedItem, {
-          onSuccess: () => {
-              console.log('Order item updated successfully!');
-          },
-          onError: (err) => {
-              console.error('Error updating order item:', err);
-          },
-      });
-
+        if(orderItem.status === OrderItemStatus.Cancelled) return;
+        orderItem.status = OrderItemStatus.Completed;
+        
+        const updatedItem: Partial<OrderItem> = { 
+          ...orderItem, 
+          status: 'completed' as OrderItemStatus
+      };  
+      updateOrderItem(updatedItem);
     })
 
     toast.success('Successfully checkout the order!', {
@@ -108,6 +97,10 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
       position: 'top-center',
       dismissible: true
     });
+
+    clearOrderItems(orderId);
+
+    navigate('/');
   }
 
   const sidebarVariants = {
@@ -128,7 +121,7 @@ const CartSidebar = ({ collapsed, setCollapsed }: CartSidebarProps) => {
     >
       <div className="flex flex-col h-full">
         <div className="p-4 border-b border-border flex items-center justify-between">
-          <h2 className="font-semibold text-lg">Cart</h2> <span>Table : {currentTable?.table_number}</span>
+          <h2 className="font-semibold text-lg">Cart</h2> <span>Table : {table?.table_number}</span>
           <button
             onClick={() => setCollapsed(true)}
             className="p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200"

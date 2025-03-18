@@ -17,7 +17,7 @@ const fetcher = async (url: string, options?: RequestInit) => {
 export const useFetchOrders = () => 
     useQuery<Order[]>({
         queryKey: ['orders'],
-        queryFn: () => fetcher(`${API_URL}/api/content/items/order?populate=1`),
+        queryFn: () => fetcher(`${API_URL}/api/content/items/order?populate=1&sort={_created:-1}`),
     });
 
 export const useFetchKitchenOrders = () => 

@@ -21,7 +21,7 @@ const POS = () => {
 
 
   const { data: table } = useFetchTable(tableId);
-  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id, !!table?.order?._id);
+  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id);
   const { data: menus } = useFetchMenus();
   const { mutateAsync: createOrder } = useCreateOrder();
   const { mutate: updateTable } = useUpdateTable();
@@ -61,7 +61,6 @@ const POS = () => {
 
     try {
       const createdOrder = await createOrder(order);
-      console.log("Created Order:", createdOrder);
       return createdOrder;
     } catch (error) {
       console.error("Error creating order:", error);
@@ -102,12 +101,15 @@ const POS = () => {
     await addOrderItem(orderItem);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addToCart = async (item: any) => {
+
+    if(cartCollapsed){
+      setCartCollapsed(false);
+    }
+
     // if it's NOT the 1st time
-    console.log('Condition!!');
-    console.log(orderItems,orderId);
-    if (orderId) {
-      console.log('More than 1 order items')
+    if (orderItems.length > 0 && orderId) {
       addNewOrderItem(item, orderId)
       return;
     }
@@ -117,13 +119,9 @@ const POS = () => {
     if (!order) return;
 
     // Step 2
-    console.log('created order')
     updateTableStatus(table, order);
     addNewOrderItem(item, order?._id);
     setOrderId(order?._id) // save order id
-    console.log(order?._id)
-    console.log('save order id')
-
   }
 
   return (
@@ -149,10 +147,10 @@ const POS = () => {
           </div>
           <button
             onClick={() => setCartCollapsed(!cartCollapsed)}
-            className="p-2 rounded-full hover:bg-gray-100 relative btn-hover"
+            className="p-2 rounded-full hover:bg-gray-100 relative btn-hover flex gap-2"
             aria-label="Open cart"
           >
-            <ShoppingCart className="h-5 w-5" />
+            <ShoppingCart className="h-5 w-5" /> <span className="bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">{orderItems.length}</span>
           </button>
         </div>
 
@@ -235,10 +233,12 @@ const POS = () => {
           )}
         </div>
       </div>
-      <CartSidebar
+      {table && <CartSidebar
         collapsed={cartCollapsed}
         setCollapsed={setCartCollapsed}
-      />
+        table={table}
+        orderId={orderId}
+      />}
     </div>
   );
 };
