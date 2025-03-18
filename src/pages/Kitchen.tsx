@@ -5,13 +5,14 @@ import { PlusCircle, Search, Check, X } from 'lucide-react';
 import { useFetchKitchenOrderItems, useUpdateOrderItem } from '@/services/orderItemsService';
 import { OrderItemStatus } from '@/types';
 import { toast } from 'sonner';
+import { getStatusColor } from '@/lib/helper';
 
 const Kitchen = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: orderItems , isLoading, error} = useFetchKitchenOrderItems();
+  const { data: orderItems, isLoading, error } = useFetchKitchenOrderItems();
   const { mutate: updateOrderItem } = useUpdateOrderItem();
 
-  if(isLoading){
+  if (isLoading) {
     return <p>Loading...</p>;
   }
 
@@ -71,7 +72,7 @@ const Kitchen = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="font-medium">All Menu Items</h2>
+          <h2 className="font-medium">Orders</h2>
 
           <div className="relative w-64">
             <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -92,6 +93,7 @@ const Kitchen = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Table</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instruction</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -124,28 +126,33 @@ const Kitchen = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{item?.special_instruction}</div>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`text-sm border px-2 py-[0.01rem] rounded-full text-gray-600 bg-white ${getStatusColor(item.status)}`}>{item.status}</span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {/* Add toggleable buttons for in-kitchen, ready, and cancelled */}
-                    <div className="flex justify-end space-x-2">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => updateStatus(item, OrderItemStatus.Ready)}
-                        className="flex items-center px-2 py-1 bg-green-500 text-white rounded-lg btn-hover"
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        <span>Ready</span>
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => updateStatus(item, OrderItemStatus.Cancelled)}
-                        className="flex items-center px-2 py-1 bg-red-500 text-white rounded-lg btn-hover"
-                      >
-                        <X className="h-4 w-4 mr-1" />
-                        <span>Cancel</span>
-                      </motion.button>
-                    </div>
+                    {item.status === OrderItemStatus.InKitchen && (
+                      <div className="flex justify-end space-x-2">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => updateStatus(item, OrderItemStatus.Ready)}
+                          className="flex items-center px-2 py-1 bg-green-500 text-white rounded-lg btn-hover"
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          <span>Ready</span>
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => updateStatus(item, OrderItemStatus.Cancelled)}
+                          className="flex items-center px-2 py-1 bg-red-500 text-white rounded-lg btn-hover"
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          <span>Cancel</span>
+                        </motion.button>
+                      </div>
+                    )}
                   </td>
                 </motion.tr>
               ))}

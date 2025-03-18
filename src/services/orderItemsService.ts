@@ -28,7 +28,7 @@ export const useFetchOrderItems = (orderId: string, allStatuses? : boolean, enab
 export const useFetchKitchenOrderItems = () => 
     useQuery<OrderItem[]>({
         queryKey: ['kitchenOrderItems'],
-        queryFn: () => fetcher(`${API_URL}/api/content/items/orderitem?populate=1&sort={_created:-1}&filter={status:"in-kitchen"}`),
+        queryFn: () => fetcher(`${API_URL}/api/content/items/orderitem?populate=1&sort={_created:-1}&filter={status:{$regex:"in-kitchen|ready"}}`),
     });
 
 export const useFetchOrderItem = (orderItemId: string) => 

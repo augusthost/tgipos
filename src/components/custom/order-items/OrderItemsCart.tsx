@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import { useFetchTable, useUpdateTable } from '@/services/tableService';
 import { useDeleteOrder } from '@/services/orderService';
 import { useFetchOrderItems, useDeleteOrderItem, useUpdateOrderItem } from '@/services/orderItemsService';
+import { getStatusColor } from '@/lib/helper';
 
 // Cart Item Component
 interface OrderItemsCartProps {
@@ -43,21 +44,6 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
     }
 
     deleteOrderItem(id)
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'new':
-        return 'border-blue-500';
-      case 'in-kitchen':
-        return 'border-yellow-500';
-      case 'ready':
-        return 'border-green-500';
-      case 'completed':
-        return 'bg-gray-800 text-white';
-      default:
-        return 'border-gray-100';
-    }
   }
 
   const setToKitchen = async (orderItem: OrderItem) => {
@@ -142,7 +128,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
             <ChefHatIcon className="h-4 w-4" /> <span>Send to kitchen</span>
           </motion.span>
         </button>}
-        
+
       </div>}
       <SpecialInstructionModal
         open={openSpecialInstruction}

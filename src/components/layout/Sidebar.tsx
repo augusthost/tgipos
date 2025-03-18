@@ -1,11 +1,11 @@
 
 import { motion } from 'framer-motion';
 import {  
-  LayoutGrid, 
   UtensilsCrossed, 
   Tags, 
   Table, 
-  ClipboardList
+  ClipboardList,
+  ChefHatIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
@@ -25,7 +25,8 @@ const menuItems: MenuItem[] = [
   { name: 'Food Menus', icon: UtensilsCrossed, path: '/food-menus' },
   { name: 'Categories', icon: Tags, path: '/categories' },
   { name: 'Tables', icon: Table, path: '/' },
-  { name: 'Orders', icon: ClipboardList, path: '/orders' },
+  { name: 'Kitchen', icon: ChefHatIcon, path: '/Kitchen' },
+  { name: 'Orders', icon: ClipboardList, path: '/orders' }
 ];
 
 const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
