@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PlusCircle, Search, Edit, Trash } from 'lucide-react';
 import { useFetchMenus } from '@/services/menuService';
+import { getImageUrl } from '@/lib/helper';
 
 const FoodMenus = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,7 +72,7 @@ const FoodMenus = () => {
                     <div className="flex items-center">
                       <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0">
                         <img 
-                          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE} 
+                          src={getImageUrl(item?.image)} 
                           alt={item.name}
                           className="h-full w-full object-cover"
                         />

@@ -5,7 +5,7 @@ import { PlusCircle, Search, Check, X } from 'lucide-react';
 import { useFetchKitchenOrderItems, useUpdateOrderItem } from '@/services/orderItemsService';
 import { OrderItemStatus } from '@/types';
 import { toast } from 'sonner';
-import { getStatusColor } from '@/lib/helper';
+import { getImageUrl, getStatusColor } from '@/lib/helper';
 
 const Kitchen = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,7 +110,7 @@ const Kitchen = () => {
                     <div className="flex items-center">
                       <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={item?.menu?.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+                          src={getImageUrl(item?.menu?.image)}
                           alt={item?.menu?.name}
                           className="h-full w-full object-cover"
                         />

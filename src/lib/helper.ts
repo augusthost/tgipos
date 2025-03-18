@@ -1,3 +1,5 @@
+import { ImageType } from "@/types";
+
 export const getStatusColor = (status: string) => {
     switch (status) {
       case 'new':
@@ -11,4 +13,10 @@ export const getStatusColor = (status: string) => {
       default:
         return 'border-gray-100';
     }
+  }
+
+
+  export const getImageUrl = (image: ImageType) : string =>{
+    if(!image) return import.meta.env.VITE_PLACEHOLDER_IMAGE;
+    return import.meta.env.VITE_ASSET_URL + image.path
   }

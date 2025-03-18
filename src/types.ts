@@ -12,10 +12,29 @@ interface BaseEntity{
   _cby?: string;
 }
 
+
+export interface ImageType extends BaseEntity{
+  path: string,
+  title: string,
+  mime?: string,
+  type?: string,
+  description?: string,
+  tags?: [string],
+  size?: number,
+  colors?: [string],
+  width?: number,
+  height?: number,
+  _hash?: string,
+  altText?: string,
+  thumbhash?: string,
+  folder?: string,
+}
+
+
 export interface Menu extends BaseEntity{
   name: string;
   price: number;
-  image: string;
+  image: ImageType;
   description: string;
   category: LinkModelType[];
   available: boolean;
@@ -67,7 +86,7 @@ export interface OrderItem extends BaseEntity{
 export interface Category extends BaseEntity{
   name: string;
   description: string;
-  image:string;
+  image: ImageType;
   _pid: string,
   _o: string;
   _children: Category[]

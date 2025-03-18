@@ -13,7 +13,7 @@ import { useParams } from 'react-router-dom';
 import { useFetchTable, useUpdateTable } from '@/services/tableService';
 import { useDeleteOrder } from '@/services/orderService';
 import { useFetchOrderItems, useDeleteOrderItem, useUpdateOrderItem } from '@/services/orderItemsService';
-import { getStatusColor } from '@/lib/helper';
+import { getImageUrl, getStatusColor } from '@/lib/helper';
 
 // Cart Item Component
 interface OrderItemsCartProps {
@@ -64,7 +64,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
       <div className="flex gap-2">
         <div className="h-14 w-14 flex-shrink-0 rounded-md overflow-hidden mr-3">
           <img
-            src={item?.menu?.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+            src={getImageUrl(item?.menu?.image)}
             alt={item?.menu?.name}
             className="h-full w-full object-cover"
           />
@@ -100,7 +100,7 @@ const OrderItemsCart = ({ item, orderId }: OrderItemsCartProps) => {
         </div>
       </div>
 
-      {<div className='flex items-center justify-between gap-2 mb-2'>
+      {<div className='flex items-center justify-between gap-2 my-2'>
         {item.status === 'new' && <button
           onClick={() => setOpenSpecialInstruction(true)}
           className="w-full text-xs text-gray-700 hover:text-gray-900"

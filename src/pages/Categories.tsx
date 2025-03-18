@@ -1,9 +1,17 @@
 
 import { motion } from 'framer-motion';
-import { categories } from '@/data/mockData';
 import { PlusCircle, Edit, Trash } from 'lucide-react';
+import { getImageUrl } from '@/lib/helper';
+import { useFetchCategories } from '@/services/categoryService';
 
 const Categories = () => {
+
+  const {data: categories, isLoading , error } = useFetchCategories()
+
+  if(isLoading){
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
@@ -30,7 +38,7 @@ const Categories = () => {
           >
             <div className="h-32 w-full overflow-hidden">
               <img
-                src={category.image}
+                src={getImageUrl(category.image)}
                 alt={category.name}
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
               />

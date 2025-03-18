@@ -10,6 +10,7 @@ import { useFetchTable, useUpdateTable } from '@/services/tableService';
 import { useCreateOrderItem, useFetchOrderItems } from '@/services/orderItemsService';
 import { useFetchMenus } from '@/services/menuService';
 import { useFetchCategories } from '@/services/categoryService';
+import { getImageUrl } from '@/lib/helper';
 
 const POS = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -178,7 +179,7 @@ const POS = () => {
             >
               <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
                 <img
-                  src={category.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+                  src={getImageUrl(category.image)}
                   alt={category.name}
                   className="h-full w-full object-cover"
                 />
@@ -203,7 +204,7 @@ const POS = () => {
             >
               <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
                 <img
-                  src={category.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+                  src={getImageUrl(category.image)}
                   alt={category.name}
                   className="h-full w-full object-cover"
                 />
@@ -261,7 +262,7 @@ const MenuItem = ({ item, onAddToCart }: MenuItemProps) => {
     >
       <div className="h-40 w-full overflow-hidden">
         <img
-          src={item.image || import.meta.env.VITE_PLACEHOLDER_IMAGE}
+          src={getImageUrl(item?.image)}
           alt={item.name}
           className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
         />
