@@ -1,0 +1,76 @@
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+                       
+Copyright (C) [2025] [TGI POS]
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
+
+                            Preamble
+                            
+The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works. By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users. We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors. You can apply it to
+your programs, too.
+
+When we speak of free software, we are referring to freedom (this is
+about freedom, not price) and this GPL aims to make sure that software
+is free.
+
+[The standard GPL v3 text continues here. Please include the complete text
+from the official GNU GPL v3 license (available at https://www.gnu.org/licenses/gpl-3.0.txt)
+until you reach the section before “How to Apply These Terms to Your New Programs”.]
+
+---------------------------------------------------------
+              ADDITIONAL ATTRIBUTION REQUIREMENT
+---------------------------------------------------------
+
+In addition to the terms of the GNU General Public License, version 3, the
+following additional requirement is imposed on all recipients of this 
+Software or derivative works thereof:
+
+   Attribution. All modified or unmodified redistributions of this 
+   Software, in source or binary form, must include prominent credit 
+   to the original developers and to the organization "augusthost".
+
+   This credit must be visible in any documentation, "About" screens, or 
+   other collateral materials accompanying the distributed software, in a 
+   manner that is reasonably appropriate to the medium in which such 
+   distribution is made.
+
+   For example, an attribution notice stating:
+
+       "TGI POS is originally developed by [August Host Developers] and maintained by augusthost."
+
+   must be included. The exact format of such attribution may be chosen suitably 
+   by the distributor but must not be removable by end users without deliberate 
+   action to re-establish it.
+
+---------------------------------------------------------
+             END OF ADDITIONAL TERMS
+---------------------------------------------------------
+
+[Insert the remaining official text of GNU GPL v3 here, including all sections after
+the point above through the “How to Apply These Terms to Your New Programs” section.]
+
+---------------------------------------------------------
+                        How to Apply These Terms to Your New Programs
+---------------------------------------------------------
+
+If you develop a new program and you want it to be of the greatest possible 
+use to the public, the best way to achieve this is to make it free software that 
+everyone can redistribute and change under these terms.
+
+[...]
+
+[Additional instructions that are part of the standard GPL v3 documentation.]
+
+---------------------------------------------------------
+                           END OF LICENSE
+---------------------------------------------------------

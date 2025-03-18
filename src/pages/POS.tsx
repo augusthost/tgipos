@@ -136,23 +136,25 @@ const POS = () => {
             </div>
           </div>
 
-          <div className="relative w-64">
-            <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search menu..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all duration-200"
-            />
+          <div className="flex gap-3">
+            <div className="relative w-64">
+              <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search menu..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <button
+              onClick={() => setCartCollapsed(!cartCollapsed)}
+              className="p-2 rounded-full hover:bg-gray-100 relative btn-hover flex gap-2"
+              aria-label="Open cart"
+            >
+              <ShoppingCart className="h-5 w-5" /> <span className="bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">{orderItems.length}</span>
+            </button>
           </div>
-          <button
-            onClick={() => setCartCollapsed(!cartCollapsed)}
-            className="p-2 rounded-full hover:bg-gray-100 relative btn-hover flex gap-2"
-            aria-label="Open cart"
-          >
-            <ShoppingCart className="h-5 w-5" /> <span className="bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">{orderItems.length}</span>
-          </button>
         </div>
 
         <div className="flex space-x-2 overflow-x-auto pb-4 -mx-1 px-1">
