@@ -1,0 +1,37 @@
+name: Lint & Prettier
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-prettier:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18]  # adjust node versions as needed
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install
+
+      # Run ESLint check
+      - name: Run ESLint
+        run: npm run lint
+        # Assuming your package.json has a script "lint": "eslint . --ext .ts,.tsx"
+      
+      # Run Prettier check for formatting issues
+      - name: Check Prettier formatting
+        run: npm run format:check
+        # Assuming you have a script "format:check" defined as:
+        # "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\""
