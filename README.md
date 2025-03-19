@@ -24,7 +24,7 @@ TGI POS is a desktop point-of-sale application built using Electron, Vite, React
 
 - [x] **Integrate with backend headless CMS** Integrate with Cockpit headless CMS to handle data management and synchronization.
 - [x] **POSTMAN API Doc:** Create API documentation using Postman.
-- [ ] **Add Authentication:** Implement multi-user login system with role-based access.
+- [x] **Add Authentication:** Implement multi-user login system with role-based access.
 - [ ] **Add Reports:** Generate sales, inventory, and performance reports.
 - [ ] **Add Refund:** Implement refund functionality to handle returns.
 - [ ] **Add Printers and Printing Settings:** Enable support for various printers and customize printing configurations.
