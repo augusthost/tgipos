@@ -2,9 +2,9 @@ name: Lint & Prettier
 
 on:
   push:
-    branches: [main]
+    branches: [develop]
   pull_request:
-    branches: [main]
+    branches: [develop]
 
 jobs:
   lint-and-prettier:
@@ -28,10 +28,7 @@ jobs:
       # Run ESLint check
       - name: Run ESLint
         run: npm run lint
-        # Assuming your package.json has a script "lint": "eslint . --ext .ts,.tsx"
       
       # Run Prettier check for formatting issues
       - name: Check Prettier formatting
         run: npm run format:check
-        # Assuming you have a script "format:check" defined as:
-        # "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\""
