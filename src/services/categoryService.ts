@@ -1,18 +1,10 @@
 // services/categoryService
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Category } from '@/types';
+import { fetcher } from '@/lib/helper';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
-
-const fetcher = async (url: string, options?: RequestInit) => {
-    const response = await fetch(url, {
-        headers: { 'Content-Type': 'application/json', 'api-key': API_KEY },
-        ...options,
-    });
-    if (!response.ok) throw new Error('Network response was not ok');
-    return response.json();
-};
 
 export const useFetchCategories = () => 
     useQuery<Category[]>({

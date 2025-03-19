@@ -11,6 +11,8 @@ import { useCreateOrderItem, useFetchOrderItems } from '@/services/orderItemsSer
 import { useFetchMenus } from '@/services/menuService';
 import { useFetchCategories } from '@/services/categoryService';
 import { getImageUrl } from '@/lib/helper';
+import { FadeInUp } from '@/components/motions/FadeInUp';
+import { toast } from 'sonner';
 
 const POS = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -253,14 +255,9 @@ interface MenuItemProps {
 
 const MenuItem = ({ item, onAddToCart }: MenuItemProps) => {
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.3 }}
+    <FadeInUp
       onClick={onAddToCart}
-      className="bg-white cursor-pointer hover:border-blue-500 h-64 rounded-xl overflow-hidden shadow-sm border border-gray-100 card-hover"
+      className={`bg-white cursor-pointer relative hover:border-blue-500 h-64 rounded-xl overflow-hidden shadow-sm border border-gray-100 card-hover ${item?.available === false ? '!opacity-50 pointer-events-none' : ''}`}
     >
       <div className="h-40 w-full overflow-hidden">
         <img
@@ -276,7 +273,8 @@ const MenuItem = ({ item, onAddToCart }: MenuItemProps) => {
           <span className="font-semibold">${item.price.toFixed(2)}</span>
         </div>
       </div>
-    </motion.div>
+      {item?.available === false && <span className='absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%] bg-gray-600 text-white px-2 py-1 rounded-full'>Not Available</span>}
+    </FadeInUp>
   );
 };
 
