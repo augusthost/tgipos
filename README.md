@@ -1,6 +1,6 @@
 # TGI POS
 
-TGI POS is a desktop point-of-sale application built using Electron, Vite, React, and TailwindCSS. This project offers a fast and responsive offline sales system designed for businesses that require robust local transaction processing alongside modern frontend technologies.
+TGI POS is a point-of-sale application built using Vite, React, Typescript, React Query and TailwindCSS. This project offers a fast and responsive offline sales system designed for businesses that require robust local transaction processing alongside modern frontend technologies.
 
 [Demo App](https://tgipos.netlify.app)
 > **Note** : Performance may be very slow when using this online mode. TGI POS is specifically designed for offline use.
@@ -13,10 +13,30 @@ TGI POS is a desktop point-of-sale application built using Electron, Vite, React
 
 ## Features
 
-- **Cross-Platform Desktop App:** Built with Electron to work on major operating systems.
-- **Fast Development:** Leveraging Vite for speedy development and hot module replacement.
-- **Modern UI:** Using React with TailwindCSS for a clean, responsive interface.
-- **Future Enhancements:** Continuously evolving with new features planned!
+**Orders**  
+Manage customer orders efficiently, including order creation, tracking, and payment processing.
+
+**Waiters**  
+Track waiter assignments, manage shifts, and monitor service performance to ensure smooth operations.
+
+**Tables**  
+Organize table management with real-time availability status, reservations, and table status updates.
+
+**Order Items**  
+Handle detailed information for each item in an order, including price, quantity, and customization options.
+
+**Menus**  
+Easily update and manage your restaurant's menu, including dish details, pricing, and availability.
+
+**Categories**  
+Organize menu items into categories for a streamlined ordering process and easier navigation.
+
+**Reports**  
+Generate insightful reports on sales, performance, and inventory to help with data-driven decision making.
+
+**Settings**  
+Customize system configurations, including user preferences, restaurant details, and integration setups.
+
 
 ---
 
@@ -36,11 +56,44 @@ TGI POS is a desktop point-of-sale application built using Electron, Vite, React
 - **Electron:** Create cross-platform desktop applications with web technologies.
 - **Vite:** A modern build tool that significantly improves the development experience.
 - **React:** A popular library for building user interfaces.
+- **React Query:** A powerful data-fetching and state management library that simplifies fetching, caching, synchronizing, and updating server state in React applications.
 - **TailwindCSS:** Utility-first CSS framework for rapid styling.
 
 ---
 
-## Installation
+Below is the revised Markdown with improved clarity and grammar:
+
+---
+
+## Installation Guide
+
+### Backend
+
+> Note: For the backend API server, ensure you have PHP 8.3+ and SQLite installed on your machine before proceeding.
+
+1. **Download Cockpit CMS:**
+
+   Download the Cockpit API Server from [here](https://drive.google.com/file/d/1t0DMH2vpKxpW0kKCBQkuAv3cCIxRfxF0/view?usp=sharing).
+
+2. **Change Directory:**
+
+   ```bash
+   cd cockpit
+   ```
+
+3. **Run Cockpit CMS:**
+
+   ```bash
+   php -S localhost:3030
+   ```
+
+This command starts the Cockpit CMS server.
+
+> If you want to modify CMS data, the default credential is `username:admin|password:admin`.
+
+---
+
+### Frontend
 
 1. **Clone the Repository:**
 
@@ -55,15 +108,26 @@ TGI POS is a desktop point-of-sale application built using Electron, Vite, React
    npm install
    ```
 
-3. **Run the Application:**
+3. **Set Up the Environment:**
+
+   > Create a `.env` file in the root folder and add the following variables:
+
+   ```bash
+   VITE_API_URL=http://localhost:3030
+   VITE_PLACEHOLDER_IMAGE=placeholder.webp
+   VITE_DEMO_SERVER=false
+   VITE_ASSET_URL=http://localhost:3030/storage/uploads
+   ```
+
+4. **Run the Application:**
 
    ```bash
    npm run dev
    ```
 
-   This command starts the Vite development server and launches the Electron app.
+This command starts the Vite development server and launches the POS app.
 
----
+----
 
 ## Contribution Guide
 
@@ -123,7 +187,7 @@ The idea for TGI Offline POS was born out of the need for a reliable, offline-ca
 
 ## Acknowledgements
 
-- Thanks to the developers and maintainers of [Electron](https://www.electronjs.org/), [Vite](https://vitejs.dev/), [React](https://reactjs.org/), and [TailwindCSS](https://tailwindcss.com/) for their amazing work.
+- Thanks to the developers and maintainers of [Cockpit CMS](https://getcockpit.com/), [Vite](https://vitejs.dev/), [Typescript](https://www.typescriptlang.org/), [React](https://reactjs.org/), [React Query](https://tanstack.com/query/latest), and [TailwindCSS](https://tailwindcss.com/) for their amazing work.
 - Special thanks to the open-source community for continuous support and contributions.
 
 ---
