@@ -115,12 +115,6 @@ If you find TGI Offline POS helpful, consider supporting the project by buying u
 
 ---
 
-## License
-
-TGI Offline POS is licensed under the [MIT License](LICENSE).
-
----
-
 ## Inspiration
 
 The idea for TGI Offline POS was born out of the need for a reliable, offline-capable point-of-sale system that doesn't rely on constant internet connectivity. We wanted to combine the best of modern web technologies with the stability of a desktop application to create a comprehensive solution for retail and service businesses.
