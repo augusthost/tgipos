@@ -29,6 +29,9 @@ const AppLayout = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {import.meta.env.VITE_DEMO_SERVER === "true" && (
+        <div className="fixed bottom-0 z-50 left-0 w-full p-2 rounded text-xs text-center bg-yellow-300 text-gray-900">This is a demo application. All data will automatically revert to its original state every hour.</div>
+      )}
       <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
 
       <main className="flex-1 overflow-auto bg-gray-50">
