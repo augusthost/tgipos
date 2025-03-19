@@ -2,6 +2,10 @@
 
 TGI POS is a desktop point-of-sale application built using Electron, Vite, React, and TailwindCSS. This project offers a fast and responsive offline sales system designed for businesses that require robust local transaction processing alongside modern frontend technologies.
 
+[Demo App](https://tgipos.netlify.app)
+> **Note** : Performance may be very slow when using this online mode. TGI POS is specifically designed for offline use.
+
+
 
 <img src="./public/pos-image.png" width="100%">
 
