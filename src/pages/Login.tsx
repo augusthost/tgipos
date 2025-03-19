@@ -37,16 +37,16 @@ export default function AuthPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) throw new Error("Invalid credentials");
-      
+
       const user = await response.json();
 
-      if(user?.data?.user){
+      if (user?.data?.user) {
         localStorage.setItem("user", JSON.stringify(user?.data?.user));
         // redirect to home page "/"
         navigate('/');
-      }else{
+      } else {
         throw new Error("Something went wrong");
       }
 
@@ -63,7 +63,7 @@ export default function AuthPage() {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Left: Auth Form */}
-      <div className="w-1/2 flex items-center justify-center p-8">
+      <div className="w-1/2 flex flex-col gap-4 items-center justify-center p-8">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader className="text-center">
             <CardTitle>Login</CardTitle>
@@ -103,8 +103,24 @@ export default function AuthPage() {
             </form>
           </CardContent>
         </Card>
+
+        {import.meta.env.VITE_DEMO_SERVER === "true" && (
+          <Card className="w-full bg-gray-50 max-w-md shadow-lg">
+            <CardHeader className="text-center">
+              <CardTitle className="text-base font-normal">Demo Accounts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul>
+                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Manager</b> <span className="w-2/3 text-left">username: manager | pass: m123456</span></li>
+                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Kitchen</b> <span className="w-2/3 text-left">username: chef | pass: c123456</span></li>
+                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Waiter1</b> <span className="w-2/3 text-left">username: waiter2 | pass: w123456</span></li>
+                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Waiter2</b> <span className="w-2/3 text-left">username: waiter2 | pass: w123456</span></li>
+              </ul>
+            </CardContent>
+        </Card>
+        )}
       </div>
-      
+
       {/* Right: Wallpaper */}
       <div className="w-1/2 bg-cover bg-center relative" style={{ backgroundImage: "url('/login-bg.jpeg')" }}>
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
