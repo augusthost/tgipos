@@ -45,11 +45,10 @@ export default function AuthPage() {
       if (user?.data?.user) {
         localStorage.setItem("user", JSON.stringify(user?.data?.user));
         // redirect to home page "/"
-        navigate('/');
+        navigate("/");
       } else {
         throw new Error("Something went wrong");
       }
-
 
       toast.success("Login successful!");
       // Handle successful login or signup
@@ -71,17 +70,27 @@ export default function AuthPage() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="relative">
-                <Mail className="absolute left-3 top-3 text-gray-500" size={20} />
+                <Mail
+                  className="absolute left-3 top-3 text-gray-500"
+                  size={20}
+                />
                 <Input
                   type="username"
                   placeholder="Username"
                   className="pl-10"
                   {...register("username")}
                 />
-                {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+                {errors.username && (
+                  <p className="text-red-500 text-sm">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 text-gray-500" size={20} />
+                <Lock
+                  className="absolute left-3 top-3 text-gray-500"
+                  size={20}
+                />
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
@@ -95,9 +104,17 @@ export default function AuthPage() {
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
-              <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                disabled={loading}
+              >
                 {loading ? "Processing..." : "Login"}
               </Button>
             </form>
@@ -107,22 +124,47 @@ export default function AuthPage() {
         {import.meta.env.VITE_DEMO_SERVER === "true" && (
           <Card className="w-full bg-gray-50 max-w-md shadow-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-base font-normal">Demo Accounts</CardTitle>
+              <CardTitle className="text-base font-normal">
+                Demo Accounts
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ul>
-                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Manager</b> <span className="w-2/3 text-left">username: manager | pass: m123456</span></li>
-                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Kitchen</b> <span className="w-2/3 text-left">username: chef | pass: c123456</span></li>
-                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Waiter1</b> <span className="w-2/3 text-left">username: waiter2 | pass: w123456</span></li>
-                <li className="p-2 text-sm flex justify-between"><b className="w-1/3">Waiter2</b> <span className="w-2/3 text-left">username: waiter2 | pass: w123456</span></li>
+                <li className="p-2 text-sm flex justify-between">
+                  <b className="w-1/3">Manager</b>{" "}
+                  <span className="w-2/3 text-left">
+                    username: manager | pass: m123456
+                  </span>
+                </li>
+                <li className="p-2 text-sm flex justify-between">
+                  <b className="w-1/3">Kitchen</b>{" "}
+                  <span className="w-2/3 text-left">
+                    username: chef | pass: c123456
+                  </span>
+                </li>
+                <li className="p-2 text-sm flex justify-between">
+                  <b className="w-1/3">Waiter1</b>{" "}
+                  <span className="w-2/3 text-left">
+                    username: waiter2 | pass: w123456
+                  </span>
+                </li>
+                <li className="p-2 text-sm flex justify-between">
+                  <b className="w-1/3">Waiter2</b>{" "}
+                  <span className="w-2/3 text-left">
+                    username: waiter2 | pass: w123456
+                  </span>
+                </li>
               </ul>
             </CardContent>
-        </Card>
+          </Card>
         )}
       </div>
 
       {/* Right: Wallpaper */}
-      <div className="w-1/2 bg-cover bg-center relative" style={{ backgroundImage: "url('/login-bg.jpeg')" }}>
+      <div
+        className="w-1/2 bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/login-bg.jpeg')" }}
+      >
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
     </div>

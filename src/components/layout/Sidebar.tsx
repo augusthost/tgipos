@@ -1,15 +1,14 @@
-
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import {
   UtensilsCrossed,
   Tags,
   Table,
   ClipboardList,
-  ChefHatIcon
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Link, useLocation } from 'react-router-dom';
-import { chefRestrictedRoutes, waiterRestrictedRoutes } from '@/middleware';
+  ChefHatIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
+import { chefRestrictedRoutes, waiterRestrictedRoutes } from "@/middleware";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -23,11 +22,11 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { name: 'Food Menus', icon: UtensilsCrossed, path: '/menus' },
-  { name: 'Categories', icon: Tags, path: '/categories' },
-  { name: 'Tables', icon: Table, path: '/' },
-  { name: 'Kitchen', icon: ChefHatIcon, path: '/kitchen' },
-  { name: 'Orders', icon: ClipboardList, path: '/orders' }
+  { name: "Food Menus", icon: UtensilsCrossed, path: "/menus" },
+  { name: "Categories", icon: Tags, path: "/categories" },
+  { name: "Tables", icon: Table, path: "/" },
+  { name: "Kitchen", icon: ChefHatIcon, path: "/kitchen" },
+  { name: "Orders", icon: ClipboardList, path: "/orders" },
 ];
 
 const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
@@ -35,7 +34,7 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const sidebarVariants = {
     expanded: { width: 240 },
-    collapsed: { width: 80 }
+    collapsed: { width: 80 },
   };
 
   return (
@@ -68,11 +67,29 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
               transition={{ duration: 0.3 }}
             >
               {collapsed ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="m9 18 6-6-6-6" />
                 </svg>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="m15 18-6-6 6-6" />
                 </svg>
               )}
@@ -85,11 +102,17 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path;
 
-              if(user?.role === "waiter" && waiterRestrictedRoutes.includes(item.path)){
+              if (
+                user?.role === "waiter" &&
+                waiterRestrictedRoutes.includes(item.path)
+              ) {
                 return null;
               }
 
-              if(user?.role === "chef" && chefRestrictedRoutes.includes(item.path)){
+              if (
+                user?.role === "chef" &&
+                chefRestrictedRoutes.includes(item.path)
+              ) {
                 return null;
               }
 
@@ -102,13 +125,15 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
                       "hover:bg-secondary/10 hover:text-secondary",
                       isActive
                         ? "bg-secondary/10 text-secondary"
-                        : "text-gray-700"
+                        : "text-gray-700",
                     )}
                   >
-                    <item.icon className={cn(
-                      "h-5 w-5 transition-all",
-                      collapsed ? "mx-auto" : "mr-2"
-                    )} />
+                    <item.icon
+                      className={cn(
+                        "h-5 w-5 transition-all",
+                        collapsed ? "mx-auto" : "mr-2",
+                      )}
+                    />
                     {!collapsed && (
                       <motion.span
                         initial={{ opacity: 0 }}
@@ -126,10 +151,12 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
         </nav>
 
         <div className="p-4">
-          <div className={cn(
-            "rounded-lg bg-gray-50 p-3 transition-all duration-200",
-            collapsed ? "px-2" : "px-3"
-          )}>
+          <div
+            className={cn(
+              "rounded-lg bg-gray-50 p-3 transition-all duration-200",
+              collapsed ? "px-2" : "px-3",
+            )}
+          >
             {!collapsed ? (
               <motion.div
                 initial={{ opacity: 0 }}

@@ -3,9 +3,8 @@
 TGI POS is a point-of-sale application built using Vite, React, Typescript, React Query and TailwindCSS. This project offers a fast and responsive offline sales system designed for businesses that require robust local transaction processing alongside modern frontend technologies.
 
 [Demo App](https://tgipos.netlify.app)
+
 > **Note** : Performance may be very slow when using this online mode. TGI POS is specifically designed for offline use.
-
-
 
 <img src="./public/pos-image.png" width="100%">
 
@@ -36,7 +35,6 @@ Generate insightful reports on sales, performance, and inventory to help with da
 
 **Settings**  
 Customize system configurations, including user preferences, restaurant details, and integration setups.
-
 
 ---
 
@@ -127,7 +125,7 @@ This command starts the Cockpit CMS server.
 
 This command starts the Vite development server and launches the POS app.
 
-----
+---
 
 ## Contribution Guide
 
@@ -148,11 +146,11 @@ We truly appreciate your interest in contributing to TGI POS! To ensure smooth c
       npm run lint
    ```
    and fix any issues that arise.
-5. General Guidelines:
+4. General Guidelines:
    - Feel free to open an issue to discuss larger changes or new feature ideas before starting work.
    - Follow the existing code style and project structure.
    - Make sure to update documentation as needed when adding new features or modifying existing ones.
-   
+
 We welcome your contributions and are excited to build a reliable, offline-capable point-of-sale system together!
 
 ---

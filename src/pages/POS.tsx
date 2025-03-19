@@ -1,65 +1,84 @@
-
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, ShoppingCart } from 'lucide-react';
-import { Menu, Order, OrderItem, OrderItemStatus, OrderStatus, OrderType, Table, TableStatus } from '@/types';
-import { useParams } from 'react-router-dom';
-import CartSidebar from '@/components/layout/CartSidebar';
-import { useCreateOrder } from '@/services/orderService';
-import { useFetchTable, useUpdateTable } from '@/services/tableService';
-import { useCreateOrderItem, useFetchOrderItems } from '@/services/orderItemsService';
-import { useFetchMenus } from '@/services/menuService';
-import { useFetchCategories } from '@/services/categoryService';
-import { getImageUrl } from '@/lib/helper';
-import { FadeInUp } from '@/components/motions/FadeInUp';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Filter, ShoppingCart } from "lucide-react";
+import {
+  Menu,
+  Order,
+  OrderItem,
+  OrderItemStatus,
+  OrderStatus,
+  OrderType,
+  Table,
+  TableStatus,
+} from "@/types";
+import { useParams } from "react-router-dom";
+import CartSidebar from "@/components/layout/CartSidebar";
+import { useCreateOrder } from "@/services/orderService";
+import { useFetchTable, useUpdateTable } from "@/services/tableService";
+import {
+  useCreateOrderItem,
+  useFetchOrderItems,
+} from "@/services/orderItemsService";
+import { useFetchMenus } from "@/services/menuService";
+import { useFetchCategories } from "@/services/categoryService";
+import { getImageUrl } from "@/lib/helper";
+import { FadeInUp } from "@/components/motions/FadeInUp";
+import { toast } from "sonner";
 
 const POS = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [orderId, setOrderId] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [orderId, setOrderId] = useState("");
   const { tableId } = useParams();
   const [cartCollapsed, setCartCollapsed] = useState(false);
   const [subcategories, setSubcategories] = useState([]);
 
-
   const { data: table } = useFetchTable(tableId);
-  const { data: orderItems, isLoading, error } = useFetchOrderItems(table?.order?._id);
+  const {
+    data: orderItems,
+    isLoading,
+    error,
+  } = useFetchOrderItems(table?.order?._id);
   const { data: menus } = useFetchMenus();
   const { mutateAsync: createOrder } = useCreateOrder();
   const { mutate: updateTable } = useUpdateTable();
   const { mutate: addOrderItem } = useCreateOrderItem();
   const { data: categories } = useFetchCategories();
 
-  useEffect(()=>{
-    if(table){
-      setOrderId(table?.order?._id)
+  useEffect(() => {
+    if (table) {
+      setOrderId(table?.order?._id);
     }
-  },[table])
+  }, [table]);
 
-  const filteredItems = menus ? menus.filter((item) => {
-    // Match Category
-    const matchesCategory = !selectedCategory || item.category?.some((cat) => cat._id === selectedCategory);
+  const filteredItems = menus
+    ? menus.filter((item) => {
+        // Match Category
+        const matchesCategory =
+          !selectedCategory ||
+          item.category?.some((cat) => cat._id === selectedCategory);
 
-    // Match Search
-    const matchesSearch = !searchQuery ||
-      [item.name, item.description].some((text) => text.toLowerCase().includes(searchQuery.toLowerCase()));
+        // Match Search
+        const matchesSearch =
+          !searchQuery ||
+          [item.name, item.description].some((text) =>
+            text.toLowerCase().includes(searchQuery.toLowerCase()),
+          );
 
-    return matchesCategory && matchesSearch;
-  }) : [];
-
-
+        return matchesCategory && matchesSearch;
+      })
+    : [];
 
   const createNewOrder = async (table: Table) => {
     const order = {
       table: {
-        _model: 'table',
-        _id: table?._id
+        _model: "table",
+        _id: table?._id,
       },
       status: OrderStatus.Pending,
       order_type: OrderType.DineIn,
       total_amount: 0,
-      customer: null
+      customer: null,
     };
 
     try {
@@ -69,51 +88,50 @@ const POS = () => {
       console.error("Error creating order:", error);
       throw error;
     }
-  }
+  };
 
   const updateTableStatus = async (table: Table, order: Order) => {
     await updateTable({
       _id: table?._id,
       status: TableStatus.Occupied,
       order: {
-        _model: 'order',
-        _id: order._id
-      }
-    })
-  }
+        _model: "order",
+        _id: order._id,
+      },
+    });
+  };
 
   const addNewOrderItem = async (item: OrderItem, orderId) => {
     const menu = {
-      _model: 'menu',
+      _model: "menu",
       _id: item._id,
-      ...item
-    }
+      ...item,
+    };
 
     const orderItem = {
       order: {
-        _model: 'order',
-        _id: orderId
+        _model: "order",
+        _id: orderId,
       },
       menu,
       status: OrderItemStatus.New,
       price: item.price,
       quantity: 1,
-      special_instruction: ''
-    }
+      special_instruction: "",
+    };
 
     await addOrderItem(orderItem);
-  }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addToCart = async (item: any) => {
-
-    if(cartCollapsed){
+    if (cartCollapsed) {
       setCartCollapsed(false);
     }
 
     // if it's NOT the 1st time
     if (orderItems.length > 0 && orderId) {
-      addNewOrderItem(item, orderId)
+      addNewOrderItem(item, orderId);
       return;
     }
 
@@ -124,11 +142,11 @@ const POS = () => {
     // Step 2
     updateTableStatus(table, order);
     addNewOrderItem(item, order?._id);
-    setOrderId(order?._id) // save order id
-  }
+    setOrderId(order?._id); // save order id
+  };
 
   return (
-    <div className='flex h-[calc(100vh-4rem)]'>
+    <div className="flex h-[calc(100vh-4rem)]">
       <div className="flex-1 p-6 overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
@@ -154,7 +172,10 @@ const POS = () => {
               className="p-2 rounded-full hover:bg-gray-100 relative btn-hover flex gap-2"
               aria-label="Open cart"
             >
-              <ShoppingCart className="h-5 w-5" /> <span className="bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">{orderItems.length}</span>
+              <ShoppingCart className="h-5 w-5" />{" "}
+              <span className="bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {orderItems.length}
+              </span>
             </button>
           </div>
         </div>
@@ -163,59 +184,64 @@ const POS = () => {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${selectedCategory === null
-              ? 'bg-secondary text-white shadow-sm'
-              : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
+              selectedCategory === null
+                ? "bg-secondary text-white shadow-sm"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
           >
             All Items
           </motion.button>
 
-          {categories && categories.map((category) => (
-            <motion.button
-              key={category._id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory(category._id)}
-              className={`flex items-center px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${selectedCategory === category._id
-                ? 'bg-secondary text-white shadow-sm'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+          {categories &&
+            categories.map((category) => (
+              <motion.button
+                key={category._id}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCategory(category._id)}
+                className={`flex items-center px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
+                  selectedCategory === category._id
+                    ? "bg-secondary text-white shadow-sm"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
-            >
-              <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
-                <img
-                  src={getImageUrl(category.image)}
-                  alt={category.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              {category.name}
-            </motion.button>
-          ))}
+              >
+                <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
+                  <img
+                    src={getImageUrl(category.image)}
+                    alt={category.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                {category.name}
+              </motion.button>
+            ))}
         </div>
 
         {/* Sub Category */}
         <div className="sub-categories flex space-x-2 overflow-x-auto pb-4 -mx-1 px-1">
-
-          {selectedCategory && subcategories && subcategories.map((category) => (
-            <motion.button
-              key={category._id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory(category._id)}
-              className={`flex items-center px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${selectedCategory === category._id
-                ? 'bg-secondary text-white shadow-sm'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+          {selectedCategory &&
+            subcategories &&
+            subcategories.map((category) => (
+              <motion.button
+                key={category._id}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCategory(category._id)}
+                className={`flex items-center px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
+                  selectedCategory === category._id
+                    ? "bg-secondary text-white shadow-sm"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
-            >
-              <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
-                <img
-                  src={getImageUrl(category.image)}
-                  alt={category.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              {category.name}
-            </motion.button>
-          ))}
+              >
+                <div className="h-6 w-6 rounded-full overflow-hidden mr-2">
+                  <img
+                    src={getImageUrl(category.image)}
+                    alt={category.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                {category.name}
+              </motion.button>
+            ))}
         </div>
 
         <div className="overflow-y-auto h-[calc(100vh-15rem)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 pb-4">
@@ -233,17 +259,21 @@ const POS = () => {
             <div className="col-span-full flex flex-col items-center justify-center h-64 text-gray-400">
               <Filter className="h-12 w-12 mb-4 opacity-30" />
               <p className="text-lg">No items found</p>
-              <p className="text-sm">Try changing your filters or search query</p>
+              <p className="text-sm">
+                Try changing your filters or search query
+              </p>
             </div>
           )}
         </div>
       </div>
-      {table && <CartSidebar
-        collapsed={cartCollapsed}
-        setCollapsed={setCartCollapsed}
-        table={table}
-        orderId={orderId}
-      />}
+      {table && (
+        <CartSidebar
+          collapsed={cartCollapsed}
+          setCollapsed={setCartCollapsed}
+          table={table}
+          orderId={orderId}
+        />
+      )}
     </div>
   );
 };
@@ -257,7 +287,7 @@ const MenuItem = ({ item, onAddToCart }: MenuItemProps) => {
   return (
     <FadeInUp
       onClick={onAddToCart}
-      className={`bg-white cursor-pointer relative hover:border-blue-500 h-64 rounded-xl overflow-hidden shadow-sm border border-gray-100 card-hover ${item?.available === false ? '!opacity-50 pointer-events-none' : ''}`}
+      className={`bg-white cursor-pointer relative hover:border-blue-500 h-64 rounded-xl overflow-hidden shadow-sm border border-gray-100 card-hover ${item?.available === false ? "!opacity-50 pointer-events-none" : ""}`}
     >
       <div className="h-40 w-full overflow-hidden">
         <img
@@ -273,7 +303,11 @@ const MenuItem = ({ item, onAddToCart }: MenuItemProps) => {
           <span className="font-semibold">${item.price.toFixed(2)}</span>
         </div>
       </div>
-      {item?.available === false && <span className='absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%] bg-gray-600 text-white px-2 py-1 rounded-full'>Not Available</span>}
+      {item?.available === false && (
+        <span className="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%] bg-gray-600 text-white px-2 py-1 rounded-full">
+          Not Available
+        </span>
+      )}
     </FadeInUp>
   );
 };

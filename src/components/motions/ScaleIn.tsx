@@ -4,10 +4,14 @@ import { ReactNode } from "react";
 interface AnimationProps {
   children: ReactNode;
   as?: "div" | "span"; // Allow switching between div and span
-  className?: string
+  className?: string;
 }
 
-export const ScaleIn: React.FC<AnimationProps> = ({ children, as = "div" , className }) => {
+export const ScaleIn: React.FC<AnimationProps> = ({
+  children,
+  as = "div",
+  className,
+}) => {
   const MotionComponent = as === "span" ? motion.span : motion.div;
 
   return (

@@ -1,9 +1,9 @@
-export interface LinkModelType{
-   _model: string;
-   _id: string;
+export interface LinkModelType {
+  _model: string;
+  _id: string;
 }
 
-interface BaseEntity{
+interface BaseEntity {
   _id?: string;
   _state?: number;
   _modified?: number;
@@ -12,26 +12,24 @@ interface BaseEntity{
   _cby?: string;
 }
 
-
-export interface ImageType extends BaseEntity{
-  path: string,
-  title: string,
-  mime?: string,
-  type?: string,
-  description?: string,
-  tags?: [string],
-  size?: number,
-  colors?: [string],
-  width?: number,
-  height?: number,
-  _hash?: string,
-  altText?: string,
-  thumbhash?: string,
-  folder?: string,
+export interface ImageType extends BaseEntity {
+  path: string;
+  title: string;
+  mime?: string;
+  type?: string;
+  description?: string;
+  tags?: [string];
+  size?: number;
+  colors?: [string];
+  width?: number;
+  height?: number;
+  _hash?: string;
+  altText?: string;
+  thumbhash?: string;
+  folder?: string;
 }
 
-
-export interface Menu extends BaseEntity{
+export interface Menu extends BaseEntity {
   name: string;
   price: number;
   image: ImageType;
@@ -40,17 +38,17 @@ export interface Menu extends BaseEntity{
   available: boolean;
 }
 
-export enum TableStatus{
+export enum TableStatus {
   Available = "available",
-  Occupied  = "occupied",
-  Reserved  = "reserved",
+  Occupied = "occupied",
+  Reserved = "reserved",
 }
 
 export enum OrderStatus {
-  Pending    = "pending",
-  Completed  = "completed",
-  Cancelled  = "cancelled",
-  Refunded   = "refunded",
+  Pending = "pending",
+  Completed = "completed",
+  Cancelled = "cancelled",
+  Refunded = "refunded",
 }
 
 export enum OrderType {
@@ -59,14 +57,14 @@ export enum OrderType {
 }
 
 export enum OrderItemStatus {
-  New       = "new", 
+  New = "new",
   InKitchen = "in-kitchen",
-  Ready     = "ready",
+  Ready = "ready",
   Cancelled = "cancelled",
-  Completed = "completed"
+  Completed = "completed",
 }
 
-export interface Order extends BaseEntity{
+export interface Order extends BaseEntity {
   table?: any;
   customer: any;
   status: OrderStatus;
@@ -74,28 +72,28 @@ export interface Order extends BaseEntity{
   total_amount: number;
 }
 
-export interface OrderItem extends BaseEntity{
+export interface OrderItem extends BaseEntity {
   order: any;
   menu: any;
   quantity: number;
   status: OrderItemStatus;
   special_instruction: string;
-  price: number
+  price: number;
 }
 
-export interface Category extends BaseEntity{
+export interface Category extends BaseEntity {
   name: string;
   description: string;
   image: ImageType;
-  _pid: string,
+  _pid: string;
   _o: string;
-  _children: Category[]
+  _children: Category[];
 }
 
-export interface Table extends BaseEntity{
+export interface Table extends BaseEntity {
   table_number?: string;
   seats?: string;
-  location?:string;
+  location?: string;
   status: string;
-  order: LinkModelType
+  order: LinkModelType;
 }

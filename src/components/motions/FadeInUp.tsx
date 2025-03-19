@@ -5,10 +5,15 @@ interface AnimationProps {
   children: ReactNode;
   as?: "div" | "span"; // Allow switching between div and span
   className?: string;
-  onClick?: () => void
+  onClick?: () => void;
 }
 
-export const FadeInUp: React.FC<AnimationProps> = ({ children, as = "div", className, onClick }) => {
+export const FadeInUp: React.FC<AnimationProps> = ({
+  children,
+  as = "div",
+  className,
+  onClick,
+}) => {
   const MotionComponent = as === "span" ? motion.span : motion.div;
 
   return (
@@ -25,4 +30,3 @@ export const FadeInUp: React.FC<AnimationProps> = ({ children, as = "div", class
     </MotionComponent>
   );
 };
-

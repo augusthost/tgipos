@@ -1,14 +1,12 @@
-
-import { motion } from 'framer-motion';
-import { PlusCircle, Edit, Trash } from 'lucide-react';
-import { getImageUrl } from '@/lib/helper';
-import { useFetchCategories } from '@/services/categoryService';
+import { motion } from "framer-motion";
+import { PlusCircle, Edit, Trash } from "lucide-react";
+import { getImageUrl } from "@/lib/helper";
+import { useFetchCategories } from "@/services/categoryService";
 
 const Categories = () => {
+  const { data: categories, isLoading, error } = useFetchCategories();
 
-  const {data: categories, isLoading , error } = useFetchCategories()
-
-  if(isLoading){
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -16,7 +14,7 @@ const Categories = () => {
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Categories</h1>
-        
+
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -26,7 +24,7 @@ const Categories = () => {
           Add New Category
         </motion.button>
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {categories.map((category) => (
           <motion.div
@@ -43,10 +41,10 @@ const Categories = () => {
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
               />
             </div>
-            
+
             <div className="p-4 flex items-center justify-between">
               <h3 className="font-medium">{category.name}</h3>
-              
+
               <div className="flex space-x-2">
                 <button className="p-1.5 rounded-lg text-secondary hover:bg-secondary/10 transition-colors">
                   <Edit className="h-4 w-4" />
