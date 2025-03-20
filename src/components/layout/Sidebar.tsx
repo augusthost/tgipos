@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import { chefRestrictedRoutes, waiterRestrictedRoutes } from "@/middleware";
+import { canAccess } from "@/middleware";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -102,17 +102,7 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path;
 
-              if (
-                user?.role === "waiter" &&
-                waiterRestrictedRoutes.includes(item.path)
-              ) {
-                return null;
-              }
-
-              if (
-                user?.role === "chef" &&
-                chefRestrictedRoutes.includes(item.path)
-              ) {
+              if(canAccess(user?.role,item.path)) {
                 return null;
               }
 

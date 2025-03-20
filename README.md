@@ -1,3 +1,10 @@
+<!-- Badges -->
+[![Linting Passed](https://img.shields.io/badge/linting-passed-brightgreen.svg)](https://github.com/<YOUR_USERNAME>/tgipos/actions?query=workflow%3Alint)
+[![Prettier Passed](https://img.shields.io/badge/prettier-passed-brightgreen.svg)](https://github.com/<YOUR_USERNAME>/tgipos/actions?query=workflow%3Aprettier)
+[![Powered by Netlify](https://api.netlify.com/api/v1/badges/c7f49f46-cd9d-4f38-8ed3-dec00e23fc2f/deploy-status)](https://www.netlify.com)
+[![Powered by Cockpit CMS](https://img.shields.io/badge/Cockpit_CMS-powered-blue.svg)](https://getcockpit.com)
+[![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
+
 # TGI POS
 
 TGI POS is a point-of-sale application built using Vite, React, Typescript, React Query and TailwindCSS. This project offers a fast and responsive offline sales system designed for businesses that require robust local transaction processing alongside modern frontend technologies.

@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
 import { getImageUrl } from "@/lib/helper";
-import { chefRestrictedRoutes, waiterRestrictedRoutes } from "@/middleware";
+import { canAccess, chefRestrictedRoutes, waiterRestrictedRoutes } from "@/middleware";
 
 const AppLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -13,18 +13,8 @@ const AppLayout = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
-    if (
-      user?.role === "waiter" &&
-      waiterRestrictedRoutes.includes(location.pathname)
-    ) {
-      navigate("/"); // Redirect waiters to home or another allowed page
-    }
-
-    if (
-      user?.role === "chef" &&
-      chefRestrictedRoutes.includes(location.pathname)
-    ) {
-      navigate("/"); // Redirect chefs to orders or another allowed page
+    if(canAccess(user?.role,location.pathname)){
+       navigate('/');
     }
   }, [location.pathname, user?.role, navigate]);
 
