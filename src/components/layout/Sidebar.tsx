@@ -102,7 +102,7 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path;
 
-              if(canAccess(user?.role,item.path)) {
+              if (canAccess(user?.role, item.path)) {
                 return null;
               }
 

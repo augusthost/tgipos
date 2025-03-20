@@ -6,16 +6,14 @@ export const waiterRestrictedRoutes = [
 ];
 export const chefRestrictedRoutes = ["/orders"];
 
-
-export const canAccess = (role: string, pathname: string) : boolean => {
-
-  if(role === "waiter"){
+export const canAccess = (role: string, pathname: string): boolean => {
+  if (role === "waiter") {
     return waiterRestrictedRoutes.includes(pathname);
   }
-  
-  if(role === "chef"){    
+
+  if (role === "chef") {
     return chefRestrictedRoutes.includes(pathname);
   }
 
   return false;
-}
+};
