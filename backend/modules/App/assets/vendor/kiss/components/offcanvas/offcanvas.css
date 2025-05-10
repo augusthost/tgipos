@@ -1,0 +1,56 @@
+kiss-offcanvas {
+    display: none;
+    position: fixed;
+    background: var(--kiss-offcanvas-background, rgba(0,0,0,.1));
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    touch-action: none;
+    opacity: 0;
+    transform: translateZ(0);
+    will-change: opacity;
+    z-index: var(--kiss-offcanvas-zIndex, 1000);
+}
+
+kiss-offcanvas > kiss-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    background: var(--kiss-offcanvas-content-background, #000);
+    color: var(--kiss-offcanvas-content-color,  #fff);
+    min-width: 300px;
+    overflow-y: auto;
+    will-change: transform;
+}
+
+kiss-offcanvas[flip="true"] > kiss-content {
+    right: 0;
+}
+
+kiss-offcanvas[open] {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease-in-out;
+
+    @starting-style {
+        opacity: 0;
+    }
+
+    & > kiss-content {
+        transform: translateX(0) translateZ(0);
+        transition: transform 0.3s ease-in-out;
+
+        @starting-style {
+            transform: translateX(-100%) translateZ(0);
+        }
+    }
+
+    &[flip="true"] > kiss-content {
+        @starting-style {
+            transform: translateX(100%) translateZ(0);
+        }
+    }
+}

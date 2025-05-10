@@ -1,0 +1,68 @@
+kiss-popout {
+    display: none;
+    align-items: flex-start;
+    position: fixed;
+    background: var(--kiss-popout-background, rgba(0,0,0,.1));
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    touch-action: none;
+    overflow-y: auto;
+    transform: translateZ(0);
+    will-change: opacity;
+    z-index: var(--kiss-popout-zIndex, 1000);
+}
+
+kiss-popout > kiss-content {
+    position: relative;
+    display: flow-root;
+    box-sizing: border-box;
+
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: var(--kiss-popout-content-spacing, 15px);
+
+    background: var(--kiss-popout-content-background, #fff);
+    color: var(--kiss-popout-content-color, inherit);
+
+    min-width: var(--kiss-popout-width, 250px);
+    max-width: calc(100% - 0.01px) !important;
+
+    will-change: transform;
+}
+
+kiss-popout[size="large"] > kiss-content {
+    width: var(--kiss-popout-large-width, 600px);
+}
+
+kiss-popout[open] {
+    display: flex;
+    transition: opacity .3s;
+    opacity: 1;
+
+    @starting-style {
+        opacity: 0;
+    }
+
+    & > kiss-content {
+        transform: translateY(10px);
+        transition: transform 200ms;
+
+        @starting-style {
+            transform: translateY(20px);
+        }
+    }
+}
+
+kiss-popout kiss-navlist a {
+    color: var(--kiss-popout-color, inherit);
+}
+
+kiss-popout kiss-navlist a:hover {
+    color: var(--kiss-popout-color-hover, inherit);
+}

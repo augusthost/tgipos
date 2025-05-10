@@ -1,0 +1,120 @@
+<?php
+ return [
+  'name' => 'menu',
+  'label' => 'Menu',
+  'info' => 'Menu',
+  'type' => 'collection',
+  'fields' => [
+    0 => [
+      'name' => 'name',
+      'type' => 'text',
+      'label' => 'Name',
+      'info' => 'Menu name',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'multiline' => false,
+        'showCount' => true,
+        'readonly' => false,
+        'placeholder' => NULL,
+        'minlength' => NULL,
+        'maxlength' => NULL,
+        'list' => NULL,
+      ],
+    ],
+    1 => [
+      'name' => 'description',
+      'type' => 'text',
+      'label' => 'Description',
+      'info' => 'Menu Description',
+      'group' => '',
+      'i18n' => false,
+      'required' => false,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'multiline' => true,
+        'showCount' => true,
+        'readonly' => false,
+        'placeholder' => NULL,
+        'minlength' => NULL,
+        'maxlength' => NULL,
+        'list' => NULL,
+      ],
+    ],
+    2 => [
+      'name' => 'category',
+      'type' => 'contentItemLink',
+      'label' => 'Category',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => true,
+      'meta' => [
+      ],
+      'opts' => [
+        'filter' => NULL,
+        'link' => 'category',
+        'display' => '${data.name}',
+      ],
+    ],
+    3 => [
+      'name' => 'price',
+      'type' => 'number',
+      'label' => 'Price',
+      'info' => 'Price',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+      ],
+    ],
+    4 => [
+      'name' => 'image',
+      'type' => 'asset',
+      'label' => 'Image',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => false,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+      ],
+    ],
+    5 => [
+      'name' => 'available',
+      'type' => 'boolean',
+      'label' => 'Available',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => false,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'label' => NULL,
+      ],
+    ],
+  ],
+  'preview' => [
+  ],
+  'group' => '',
+  'meta' => NULL,
+  '_created' => 1741160922,
+  '_modified' => 1741169972,
+  'color' => '#00ffb3',
+  'revisions' => false,
+  'icon' => 'system:assets/icon-sets/Food/restaurant-line.svg',
+];

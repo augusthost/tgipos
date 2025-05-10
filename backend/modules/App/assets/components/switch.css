@@ -1,0 +1,38 @@
+
+.app-switch {
+
+    position: relative;
+    width: 2em;
+    height: 1em;
+
+    font-size: inherit;
+    background: var(--app-switch-offcolor, red);
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.app-switch:checked {
+    background: var(--app-switch-oncolor, green);
+}
+
+.app-switch::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1em;
+    height: 1em;
+    background: #fff;
+    transition: left 250ms;
+    border: .15em var(--app-switch-offcolor, red) solid;
+}
+
+.app-switch:checked::before {
+    left: calc(100% - 1em);
+    right: 0;
+    border-color: var(--app-switch-oncolor, green);
+}

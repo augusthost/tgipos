@@ -1,0 +1,128 @@
+<?php
+ return [
+  'name' => 'orderitem',
+  'label' => 'Order Item',
+  'info' => 'Order Item',
+  'type' => 'collection',
+  'fields' => [
+    0 => [
+      'name' => 'order',
+      'type' => 'contentItemLink',
+      'label' => 'Order',
+      'info' => 'Order',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'filter' => NULL,
+        'link' => 'order',
+        'display' => '${data.order_type}, (${data.status})',
+      ],
+    ],
+    1 => [
+      'name' => 'menu',
+      'type' => 'contentItemLink',
+      'label' => 'Menu',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'filter' => NULL,
+        'link' => 'menu',
+        'display' => '${data.name}',
+      ],
+    ],
+    2 => [
+      'name' => 'status',
+      'type' => 'select',
+      'label' => 'Status',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => false,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'options' => [
+          0 => 'new',
+          1 => 'in-kitchen',
+          2 => 'ready',
+          3 => 'cancelled',
+          4 => 'completed',
+        ],
+        'multiple' => false,
+      ],
+    ],
+    3 => [
+      'name' => 'price',
+      'type' => 'number',
+      'label' => 'Price',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'readonly' => false,
+        'placeholder' => NULL,
+        'min' => NULL,
+        'max' => NULL,
+        'step' => NULL,
+      ],
+    ],
+    4 => [
+      'name' => 'quantity',
+      'type' => 'number',
+      'label' => 'Quantity',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+      ],
+    ],
+    5 => [
+      'name' => 'special_instruction',
+      'type' => 'text',
+      'label' => 'Special Instruction',
+      'info' => '',
+      'group' => '',
+      'i18n' => false,
+      'required' => true,
+      'multiple' => false,
+      'meta' => [
+      ],
+      'opts' => [
+        'multiline' => true,
+        'showCount' => true,
+        'readonly' => false,
+        'placeholder' => NULL,
+        'minlength' => NULL,
+        'maxlength' => NULL,
+        'list' => NULL,
+      ],
+    ],
+  ],
+  'preview' => [
+  ],
+  'group' => 'Order Item',
+  'meta' => NULL,
+  '_created' => 1741165441,
+  '_modified' => 1742188839,
+  'color' => '#00ffb3',
+  'revisions' => false,
+  'icon' => 'system:assets/icon-sets/Design/pantone-line.svg',
+];

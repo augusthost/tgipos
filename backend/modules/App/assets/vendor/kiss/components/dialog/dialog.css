@@ -1,0 +1,68 @@
+kiss-dialog {
+    display: none;
+    align-items: flex-start;
+    position: fixed;
+    background: var(--kiss-dialog-background, rgba(0,0,0,.1));
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    touch-action: none;
+    overflow-y: auto;
+    transform: translateZ(0);
+    will-change: opacity;
+    z-index: var(--kiss-dialog-zIndex, 1000);
+}
+
+kiss-dialog > kiss-content {
+    position: relative;
+    display: flow-root;
+    box-sizing: border-box;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: var(--kiss-dialog-content-spacing, 10px);
+
+    background: var(--kiss-dialog-content-background, #fff);
+    color: var(--kiss-dialog-content-color, inherit);
+
+    width: var(--kiss-dialog-width, 350px);
+    max-width: calc(100% - 0.01px) !important;
+
+    transform: translateY(20px) translateZ(0);
+    will-change: transform;
+}
+
+kiss-dialog[size="medium"] > kiss-content {
+    width: var(--kiss-dialog-medium-width, 500px);
+}
+
+kiss-dialog[size="large"] > kiss-content {
+    width: var(--kiss-dialog-large-width, 600px);
+}
+
+kiss-dialog[size="xlarge"] > kiss-content {
+    width: var(--kiss-dialog-xlarge-width, 1200px);
+}
+
+kiss-dialog[open] {
+    display: flex;
+    transition: opacity .3s;
+    opacity: 1;
+
+    @starting-style {
+        opacity: 0;
+    }
+
+    & > kiss-content {
+        transform: translateY(0) translateZ(0);
+        transition: transform 250ms;
+
+        @starting-style {
+            transform: translateY(20px);
+        }
+    }
+}

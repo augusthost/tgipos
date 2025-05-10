@@ -1,0 +1,5 @@
+app-scrollcontainer {
+    display: block;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
