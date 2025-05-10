@@ -41,7 +41,6 @@ const CartSidebar = ({
   const { mutate: updateTable } = useUpdateTable();
   const navigate = useNavigate();
 
-
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -131,93 +130,93 @@ const CartSidebar = ({
   return (
     <>
       <motion.div
-      className={cn(
-        "h-[calc(100vh-4rem)] border-l border-border bg-white shadow-sm z-20",
-        collapsed ? "hidden" : "block",
-      )}
-      initial="collapsed"
-      animate={collapsed ? "collapsed" : "expanded"}
-      variants={sidebarVariants}
-      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}
-    >
-      <div className="flex flex-col h-full">
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <h2 className="font-semibold text-lg">Cart</h2>{" "}
-          <span>Table : {table?.table_number}</span>
-          <button
-            onClick={() => setCollapsed(true)}
-            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200"
-            aria-label="Close cart"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+        className={cn(
+          "h-[calc(100vh-4rem)] border-l border-border bg-white shadow-sm z-20",
+          collapsed ? "hidden" : "block",
+        )}
+        initial="collapsed"
+        animate={collapsed ? "collapsed" : "expanded"}
+        variants={sidebarVariants}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <h2 className="font-semibold text-lg">Cart</h2>{" "}
+            <span>Table : {table?.table_number}</span>
+            <button
+              onClick={() => setCollapsed(true)}
+              className="p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200"
+              aria-label="Close cart"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          <AnimatePresence initial={false}>
-            {orderItems.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center h-full text-gray-400"
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <AnimatePresence initial={false}>
+              {orderItems.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center h-full text-gray-400"
+                >
+                  <ShoppingCart className="h-16 w-16 mb-4 opacity-30" />
+                  <p>Your cart is empty</p>
+                </motion.div>
+              ) : (
+                orderItems.map((item, index) => (
+                  <OrderItemsCart
+                    orderId={orderId}
+                    key={item?._id || index}
+                    item={item}
+                  />
+                ))
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="p-4 border-t border-border">
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Subtotal</span>
+                <span>${getTotal().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Tax (0%)</span>
+                <span>${getTotal().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-semibold">
+                <span>Total</span>
+                <span>${getTotal().toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                className="flex items-center justify-center p-3 rounded-lg bg-gray-200 cursor-pointer text-gray-700 hover:bg-gray-200 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
+                onClick={() => print()}
+                disabled={orderItems.length === 0}
               >
-                <ShoppingCart className="h-16 w-16 mb-4 opacity-30" />
-                <p>Your cart is empty</p>
-              </motion.div>
-            ) : (
-              orderItems.map((item, index) => (
-                <OrderItemsCart
-                  orderId={orderId}
-                  key={item?._id || index}
-                  item={item}
-                />
-              ))
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div className="p-4 border-t border-border">
-          <div className="space-y-2 mb-4">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Subtotal</span>
-              <span>${getTotal().toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Tax (0%)</span>
-              <span>${getTotal().toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between font-semibold">
-              <span>Total</span>
-              <span>${getTotal().toFixed(2)}</span>
+                <Printer className="h-5 w-5 mr-2" />
+                <span>Print Receipt</span>
+              </button>
+              <button
+                className="flex items-center justify-center p-3 rounded-lg bg-secondary text-white hover:bg-secondary/90 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
+                disabled={
+                  orderItems.length === 0 &&
+                  orderItems.every((item) => item.status === "ready")
+                }
+                onClick={processCheckout}
+              >
+                <CreditCard className="h-5 w-5 mr-2" />
+                <span>Checkout</span>
+              </button>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              className="flex items-center justify-center p-3 rounded-lg bg-gray-200 cursor-pointer text-gray-700 hover:bg-gray-200 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
-              onClick={()=>print()}
-              disabled={orderItems.length === 0}
-            >
-              <Printer className="h-5 w-5 mr-2" />
-              <span>Print Receipt</span>
-            </button>
-            <button
-              className="flex items-center justify-center p-3 rounded-lg bg-secondary text-white hover:bg-secondary/90 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
-              disabled={
-                orderItems.length === 0 &&
-                orderItems.every((item) => item.status === "ready")
-              }
-              onClick={processCheckout}
-            >
-              <CreditCard className="h-5 w-5 mr-2" />
-              <span>Checkout</span>
-            </button>
-          </div>
         </div>
-      </div>
-    </motion.div>
-    {order && <PrintOrderDetails order={order} />}
+      </motion.div>
+      {order && <PrintOrderDetails order={order} />}
     </>
   );
 };

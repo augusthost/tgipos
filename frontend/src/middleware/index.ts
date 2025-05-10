@@ -3,9 +3,9 @@ export const waiterRestrictedRoutes = [
   "/kitchen",
   "/categories",
   "/orders",
-  "/reports"
+  "/reports",
 ];
-export const chefRestrictedRoutes = ["/orders","/reports"];
+export const chefRestrictedRoutes = ["/orders", "/reports"];
 
 export const canAccess = (role: string, pathname: string): boolean => {
   if (role === "waiter") {

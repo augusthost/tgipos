@@ -22,13 +22,17 @@ const PrintOrderDetails = ({ order }: { order: Order }) => {
         <hr className="my-4" />
         <OrderItemsLoop orderItems={orderItems} />
         <div className="flex justify-end w-full mt-2 pt-2 border-t">
-            <div>Subtotal :</div> <div className="w-[50px] text-right">${order?.total_amount}</div>
+          <div>Subtotal :</div>{" "}
+          <div className="w-[50px] text-right">${order?.total_amount}</div>
         </div>
         <div className="flex justify-end w-full mt-2 pt-2 border-t">
-            <div>Tax :</div> <div className="w-[50px] text-right">$0</div>
+          <div>Tax :</div> <div className="w-[50px] text-right">$0</div>
         </div>
         <div className="flex justify-end  w-full mt-2 pt-2 border-t">
-            <div>Total :</div> <div className="w-[50px] text-right">$<b>{order?.total_amount}</b></div>
+          <div>Total :</div>{" "}
+          <div className="w-[50px] text-right">
+            $<b>{order?.total_amount}</b>
+          </div>
         </div>
       </div>
     </div>
