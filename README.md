@@ -14,7 +14,7 @@ TGI POS is a point-of-sale application built using Vite, React, Typescript, Reac
 
 > **Note** : Performance may be very slow when using this online mode. TGI POS is specifically designed for offline use.
 
-<img src="./public/pos-image.png" width="100%">
+<img src="./frontend/public/pos-image.png" width="100%">
 
 ---
 
