@@ -12,7 +12,7 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "test": "jest",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "cd ../ && husky frontend/.husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
