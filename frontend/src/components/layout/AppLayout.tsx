@@ -60,7 +60,7 @@ const AppLayout = () => {
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
                 <DropdownMenu.Content
-                  className="w-48 bg-white shadow-md rounded-md p-2 border border-gray-200"
+                  className="w-48 z-50 bg-white shadow-md rounded-md p-2 border border-gray-200"
                   align="end"
                 >
                   <DropdownMenu.Item className="flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer hover:bg-gray-100">

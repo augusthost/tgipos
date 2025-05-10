@@ -26,7 +26,7 @@ export const useFetchKitchenOrders = () =>
 export const useFetchOrder = (orderId: string) =>
   useQuery<Order>({
     queryKey: ["order", orderId],
-    queryFn: () => fetcher(`${API_URL}/api/content/items/order/${orderId}`),
+    queryFn: () => fetcher(`${API_URL}/api/content/item/order/${orderId}`),
   });
 
 export const useCreateOrder = () => {

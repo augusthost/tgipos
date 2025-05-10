@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3030:80"
+    volumes:
+      - ./backend:/var/www/html
+      - backend-storage:/var/www/html/storage
+    environment:
+      - PHP_MEMORY_LIMIT=256M
+      - UPLOAD_MAX_FILESIZE=64M
+      - POST_MAX_SIZE=64M
+    user: "${UID:-1000}:${GID:-1000}"
+    # Alternative approach with entrypoint script if user mapping doesn't work
+    # entrypoint: >
+    #   /bin/sh -c "
+    #   chown -R www-data:www-data /var/www/html/storage &&
+    #   chmod -R 775 /var/www/html/storage &&
+    #   apache2-foreground
+    #   "
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3030
+      - VITE_PLACEHOLDER_IMAGE=placeholder.webp
+      - VITE_DEMO_SERVER=false
+      - VITE_ASSET_URL=http://localhost:3030/storage/uploads
+    depends_on:
+      - backend
+
+volumes:
+  backend-storage:

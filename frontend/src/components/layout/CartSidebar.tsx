@@ -8,17 +8,17 @@ import {
   Table,
   TableStatus,
 } from "@/types";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useState } from "react";
 import OrderItemsCart from "../custom/order-items/OrderItemsCart";
 import {
   useClearOrderItems,
   useFetchOrderItems,
   useUpdateOrderItem,
 } from "@/services/orderItemsService";
-import { useFetchTable, useUpdateTable } from "@/services/tableService";
-import { useUpdateOrder } from "@/services/orderService";
+import { useUpdateTable } from "@/services/tableService";
+import { useFetchOrder, useUpdateOrder } from "@/services/orderService";
+import PrintOrderDetails from "../custom/orders/PrintOrderDetails";
 
 interface CartSidebarProps {
   collapsed: boolean;
@@ -34,11 +34,13 @@ const CartSidebar = ({
   orderId,
 }: CartSidebarProps) => {
   const { data: orderItems, isLoading, error } = useFetchOrderItems(orderId);
+  const { data: order } = useFetchOrder(orderId);
   const { mutate: updateOrderItem } = useUpdateOrderItem();
   const clearOrderItems = useClearOrderItems();
   const { mutate: updateOrder } = useUpdateOrder();
   const { mutate: updateTable } = useUpdateTable();
   const navigate = useNavigate();
+
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -127,7 +129,8 @@ const CartSidebar = ({
   };
 
   return (
-    <motion.div
+    <>
+      <motion.div
       className={cn(
         "h-[calc(100vh-4rem)] border-l border-border bg-white shadow-sm z-20",
         collapsed ? "hidden" : "block",
@@ -193,7 +196,7 @@ const CartSidebar = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               className="flex items-center justify-center p-3 rounded-lg bg-gray-200 cursor-pointer text-gray-700 hover:bg-gray-200 disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200 btn-hover"
-              onClick={() => {}}
+              onClick={()=>print()}
               disabled={orderItems.length === 0}
             >
               <Printer className="h-5 w-5 mr-2" />
@@ -214,6 +217,8 @@ const CartSidebar = ({
         </div>
       </div>
     </motion.div>
+    {order && <PrintOrderDetails order={order} />}
+    </>
   );
 };
 

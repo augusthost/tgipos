@@ -5,6 +5,7 @@ import {
   Table,
   ClipboardList,
   ChefHatIcon,
+  PieChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
@@ -27,6 +28,7 @@ const menuItems: MenuItem[] = [
   { name: "Tables", icon: Table, path: "/" },
   { name: "Kitchen", icon: ChefHatIcon, path: "/kitchen" },
   { name: "Orders", icon: ClipboardList, path: "/orders" },
+  { name: "Reports", icon: PieChart, path: "/reports" },
 ];
 
 const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
