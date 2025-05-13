@@ -1,10 +1,12 @@
 import { lazy, Suspense, useMemo } from "react";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster as CustomToaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import LoadingSpinner from "./components/ui/loader";
+import Reports from "./pages/Reports";
 
 // Lazy load pages
 const POS = lazy(() => import("@/pages/POS"));
@@ -29,7 +31,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
+        {/* Keep the original Toaster for backward compatibility */}
+        <CustomToaster />
+        {/* Add the Sonner Toaster for toast.error/success from sonner */}
+        <SonnerToaster />
         <BrowserRouter>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
@@ -48,6 +53,7 @@ const App = () => {
                 <Route path="categories" element={<Categories />} />
                 <Route path="kitchen" element={<Kitchen />} />
                 <Route path="orders" element={<Orders />} />
+                <Route path="reports" element={<Reports />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

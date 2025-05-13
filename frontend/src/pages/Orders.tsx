@@ -7,9 +7,11 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  Trash,
 } from "lucide-react";
+import { toast } from "sonner";
 import OrderDetails from "@/components/custom/orders/OrderDetails";
-import { useFetchOrders } from "@/services/orderService";
+import { useDeleteOrder, useFetchOrders } from "@/services/orderService";
 import PrintOrderDetails from "@/components/custom/orders/PrintOrderDetails";
 
 const Orders = () => {
@@ -18,6 +20,7 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
   const { data: orders, isLoading, error } = useFetchOrders();
+  const { mutate: deleteOrderMutation } = useDeleteOrder();
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -80,6 +83,26 @@ const Orders = () => {
         return <XCircle className="h-4 w-4 mr-1.5" />;
       default:
         return null;
+    }
+  };
+
+  const deleteOrder = (orderId: string) => {
+    // Show confirmation dialog
+    if (window.confirm("Are you sure you want to delete this order? This action cannot be undone.")) {
+      deleteOrderMutation(orderId, {
+        onSuccess: () => {
+          toast.success("Order deleted successfully", {
+            duration: 3000,
+            position: "top-center",
+          });
+        },
+        onError: (error) => {
+          toast.error(`Failed to delete order: ${error instanceof Error ? error.message : "Unknown error"}`, {
+            duration: 3000,
+            position: "top-center",
+          });
+        }
+      });
     }
   };
 
@@ -242,12 +265,12 @@ const Orders = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => openOrderDetails(order)}
-                        className="text-secondary hover:text-secondary/80 mr-3"
+                        className="text-secondary hover:text-secondary/80 mr-2"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-gray-500 hover:text-gray-700 mr-2"
                         onClick={() => {
                           setSelectedOrder(order);
                           setTimeout(() => {
@@ -256,6 +279,11 @@ const Orders = () => {
                         }}
                       >
                         <Printer className="h-4 w-4" />
+                      </button>
+                      <button 
+                      onClick={() => deleteOrder(order._id)}
+                      className="text-red-500 hover:text-red-600">
+                        <Trash className="h-4 w-4" />
                       </button>
                     </td>
                   </motion.tr>

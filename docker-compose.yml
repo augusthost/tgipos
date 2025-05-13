@@ -20,7 +20,6 @@ services:
       - "8080:8080"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:3030
       - VITE_PLACEHOLDER_IMAGE=placeholder.webp
